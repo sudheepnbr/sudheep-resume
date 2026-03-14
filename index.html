@@ -47,6 +47,13 @@
         }
         body.edit-mode .admin-top-bar { display: flex; }
 
+        .admin-controls { display: flex; gap: 15px; align-items: center; }
+
+        .admin-btn {
+            background: #333; border: 1px solid #555; color: white;
+            padding: 5px 15px; border-radius: 5px; cursor: pointer; font-size: 12px;
+        }
+
         .save-btn {
             background: var(--accent); border: none; color: white;
             padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 800;
@@ -57,8 +64,14 @@
         .t-btn { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
         .t-btn.active { border-color: var(--accent); transform: scale(1.3); }
 
-        /* CONTENT BOXES & HOVER */
-        .dashboard { padding: 40px 10%; display: grid; grid-template-columns: repeat(12, 1fr); gap: 25px; }
+        /* DASHBOARD GRID */
+        .dashboard { 
+            padding: 40px 10%; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 25px; 
+            align-items: flex-start;
+        }
         
         .box { 
             background: var(--card); border: 1px solid var(--border); 
@@ -66,6 +79,15 @@
             box-shadow: 0 10px 30px var(--shadow);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
             overflow: hidden;
+            min-width: 200px;
+            min-height: 150px;
+        }
+
+        /* RESIZABLE LOGIC */
+        body.edit-mode .box { 
+            resize: both; 
+            overflow: auto; 
+            border: 2px dashed var(--accent);
         }
 
         .box:hover {
@@ -74,16 +96,14 @@
             border-color: var(--accent);
         }
 
-        /* RESIZABLE LOGIC (ADMIN ONLY) */
-        body.edit-mode .box { 
-            resize: both; overflow: auto; 
-            border: 2px dashed var(--accent);
-        }
-
         .box h2 { color: var(--text-h); margin-bottom: 15px; font-weight: 800; }
-        .span-4 { grid-column: span 4; } .span-6 { grid-column: span 6; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
+        
+        /* Box sizing presets */
+        .w-small { width: calc(33.33% - 17px); }
+        .w-med { width: calc(50% - 13px); }
+        .w-full { width: 100%; }
 
-        /* PROFILE */
+        /* HERO & PROFILE */
         .hero { display: flex; align-items: center; padding: 120px 10% 40px; gap: 50px; }
         .profile-img-wrap { 
             width: 180px; height: 180px; border-radius: 50px; 
@@ -93,20 +113,33 @@
         .profile-img-wrap input { position: absolute; inset: 0; opacity: 0; cursor: pointer; display: none; }
         body.edit-mode .profile-img-wrap input { display: block; }
 
+        /* DELETE BTN */
+        .del-box {
+            position: absolute; top: 10px; right: 10px;
+            background: #ff4444; color: white; border: none;
+            width: 25px; height: 25px; border-radius: 50%;
+            cursor: pointer; display: none; font-weight: bold;
+        }
+        body.edit-mode .del-box { display: block; }
+
         /* TICKER */
         .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 15px 0; overflow: hidden; z-index: 100; }
         .ticker { display: inline-block; animation: scroll 60s linear infinite; font-weight: 800; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        @media (max-width: 900px) { .hero { flex-direction: column; text-align: center; } .dashboard { display: flex; flex-direction: column; } }
+        @media (max-width: 900px) { 
+            .hero { flex-direction: column; text-align: center; } 
+            .w-small, .w-med { width: 100%; }
+        }
     </style>
 </head>
 <body data-theme="default">
 
     <div class="admin-top-bar">
-        <div>
-            <span>Global Background:</span>
-            <input type="file" onchange="setGlobalBg(event)" style="font-size: 10px;">
+        <div class="admin-controls">
+            <span>BG:</span>
+            <input type="file" onchange="setGlobalBg(event)" style="font-size: 10px; width: 120px;">
+            <button class="admin-btn" onclick="addNewBox()">+ ADD BOX</button>
         </div>
         <button class="save-btn" onclick="exitAdmin()">SAVE & EXIT</button>
     </div>
@@ -126,38 +159,43 @@
             <h1 id="user-name">SUDHEEP P.</h1>
             <h3 style="color: var(--accent)">Sr. IT System Administrator</h3>
             <p style="max-width: 600px;">
-                Infrastructure specialist managing mission-critical Data Centers for <strong>Oman International Hospital</strong>. 18 years of cross-border technical leadership.
+                Infrastructure specialist managing mission-critical Data Centers for <strong>Oman International Hospital</strong>. 18 years of cross-border technical leadership. [cite: 6, 45, 96]
             </p>
         </div>
     </section>
 
     <section class="dashboard" id="main-grid">
-        <div class="box span-8">
+        <div class="box w-med" style="height: 250px;">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
             <h2>Core Infrastructure</h2>
-            <p>Installation and configuration of Data Centers with Windows Servers (ADDS, DNS, DHCP, GPO). Expert in VMware Management and Veeam Backup/Replication for healthcare-grade availability.</p>
+            <p>Orchestrating mission-critical Data Center operations through expert administration of Windows Server ecosystems (ADDS, DNS, DHCP, GPO) and high-availability VMware clusters. Specialized in architecting Veeam-driven disaster recovery strategies to ensure 24/7 healthcare-grade system availability. [cite: 17, 21, 22, 53]</p>
         </div>
 
-        <div class="box span-4" style="text-align: center;">
+        <div class="box w-small" style="text-align: center; height: 250px; display: flex; flex-direction: column; justify-content: center;">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
             <div style="font-size: 3.5rem; font-weight: 800; color: var(--accent);">18+</div>
-            <div style="font-weight: 800; font-size: 0.7rem; letter-spacing: 2px;">YEARS OF MASTERY</div>
+            <div style="font-weight: 800; font-size: 0.7rem; letter-spacing: 2px;">YEARS OF MASTERY [cite: 6, 96]</div>
         </div>
 
-        <div class="box span-6">
+        <div class="box w-med" style="height: 250px;">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
             <h2>ELV & Security Expert</h2>
-            <p>Commissioned IP CCTV systems for over 200 projects. Certified in Exacq Vision, Hikvision, and Dahua. Deep expertise in Fiber backbone creation and Enterprise NVR storage.</p>
+            <p>Commissioned IP CCTV systems for over 200 projects. Certified in Exacq Vision, Hikvision, and Dahua. Deep expertise in Fiber backbone creation and Enterprise NVR storage. [cite: 29, 32, 41, 131]</p>
         </div>
 
-        <div class="box span-6">
+        <div class="box w-med" style="height: 250px;">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
             <h2>Technical Stack</h2>
-            <p>• HPE Synergy & Sangfor HCI<br>• FortiGate Firewall Monitoring<br>• Cisco Call Manager & IP Telephony<br>• SAN/NAS Storage Provisioning</p>
+            <p>• HPE Synergy & Sangfor HCI<br>• FortiGate Firewall Monitoring<br>• Cisco Call Manager & IP Telephony<br>• SAN/NAS Storage Provisioning [cite: 26, 54, 56]</p>
         </div>
 
-        <div class="box span-12" style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="box w-full" style="display: flex; align-items: center; justify-content: space-between; min-height: 200px;">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
             <div>
                 <h2>Contact Info</h2>
-                <p><strong>Email:</strong> sudheepnbr@gmail.com</p>
-                <p><strong>Phone:</strong> +968 93566572</p>
-                <p><strong>Nationality:</strong> Indian (Oman License)</p>
+                <p><strong>Email:</strong> sudheepnbr@gmail.com [cite: 6, 96]</p>
+                <p><strong>Phone:</strong> +968 93566572 [cite: 6, 96]</p>
+                <p><strong>Nationality:</strong> Indian (Oman License) [cite: 6, 96]</p>
             </div>
             <div id="qrcode"></div>
         </div>
@@ -170,28 +208,51 @@
     </div>
 
     <script>
-        // --- ADMIN TRIGGER ---
+        const grid = document.getElementById('main-grid');
         const trigger = document.getElementById('edit-trigger');
         let pressTimer;
+
+        // --- ADMIN ACCESS ---
         trigger.onmousedown = () => {
             pressTimer = setTimeout(() => {
                 document.body.classList.add('edit-mode');
-                document.querySelectorAll('[contenteditable="false"], p, h1, h2, h3, li').forEach(e => e.contentEditable = "true");
-                alert("ADMIN MODE: Drag box corners to resize. Edit text. Upload BG at top.");
+                makeEditable(true);
+                alert("ADMIN MODE ACTIVE: \n1. Drag box corners to resize (W/H).\n2. Click '+ ADD BOX' for new content.\n3. Click 'X' to delete boxes.\n4. Edit text directly.");
             }, 5000);
         };
         trigger.onmouseup = () => clearTimeout(pressTimer);
 
+        function makeEditable(val) {
+            const elements = document.querySelectorAll('p, h1, h2, h3, li, strong');
+            elements.forEach(e => e.contentEditable = val);
+        }
+
         function exitAdmin() {
             document.body.classList.remove('edit-mode');
-            document.querySelectorAll('[contenteditable="true"]').forEach(e => e.contentEditable = "false");
+            makeEditable(false);
             saveChanges();
         }
 
-        // --- GLOBAL SETTINGS ---
+        // --- DYNAMIC CONTENT ---
+        function addNewBox() {
+            const newBox = document.createElement('div');
+            newBox.className = 'box w-med';
+            newBox.style.height = '250px';
+            newBox.innerHTML = `
+                <button class="del-box" onclick="this.parentElement.remove()">×</button>
+                <h2 contenteditable="true">New Section Title</h2>
+                <p contenteditable="true">Click here to add your details...</p>
+            `;
+            grid.appendChild(newBox);
+        }
+
+        // --- MEDIA & GLOBAL ---
         function setGlobalBg(e) {
             const reader = new FileReader();
-            reader.onload = () => document.body.style.backgroundImage = `url(${reader.result})`;
+            reader.onload = () => {
+                document.body.style.backgroundImage = `url(${reader.result})`;
+                document.body.style.backgroundSize = "cover";
+            };
             reader.readAsDataURL(e.target.files[0]);
         }
 
@@ -223,7 +284,7 @@
             const blob = new Blob([code], {type: 'text/html'});
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'index.html';
+            a.download = 'updated_portfolio.html';
             a.click();
         }
     </script>
