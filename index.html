@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sudheep P. | Infrastructure Architect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Sudheep P. | Infrastructure Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        /* --- REFINED THEME ENGINE --- */
         :root {
-            /* DEFAULT: Blue & White (Icon 2) */
             --bg: #ffffff; --card: #f8fafc; --accent: #2563eb; 
             --text-h: #0f172a; --text-p: #334155; --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.05);
-            --font-main: 'Plus Jakarta Sans', sans-serif;
         }
 
         [data-theme="dark"] { 
@@ -25,180 +22,186 @@
         [data-theme="lite"] { 
             --bg: #fdfdfd; --card: #ffffff; --accent: #64748b; 
             --text-h: #1e293b; --text-p: #475569; --border: #cbd5e1; 
-            --shadow: rgba(0, 0, 0, 0.03);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.4s ease, color 0.4s ease, border 0.4s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
             background-color: var(--bg); 
-            color: var(--text-p); 
-            font-family: var(--font-main); 
-            overflow-x: hidden; 
-            line-height: 1.6; 
-            padding-bottom: 120px; 
-        }
-        
-        /* --- HOVER ANIMATION ENGINE --- */
-        .box { 
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            border-radius: 40px; 
-            padding: 40px; 
-            position: relative; 
-            background-size: cover; 
+            background-size: cover;
             background-position: center;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-                        box-shadow 0.4s ease, 
-                        border-color 0.4s ease;
-            box-shadow: 0 10px 30px var(--shadow);
-            cursor: default;
+            background-attachment: fixed;
+            color: var(--text-p); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6; 
+            padding-bottom: 120px;
+            transition: background 0.4s ease;
         }
 
-        .box:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: var(--accent);
-            box-shadow: 0 20px 40px var(--shadow), 0 0 20px rgba(var(--accent-rgb), 0.1);
-            z-index: 10;
+        /* ADMIN HUD */
+        .admin-top-bar {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: #000; color: #fff; padding: 10px 5%;
+            display: none; justify-content: space-between; align-items: center;
+            z-index: 10000; border-bottom: 2px solid var(--accent);
+        }
+        body.edit-mode .admin-top-bar { display: flex; }
+
+        .save-btn {
+            background: var(--accent); border: none; color: white;
+            padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 800;
         }
 
-        .box h2 { 
-            color: var(--text-h); 
-            margin-bottom: 15px; 
-            font-size: 1.5rem; 
-            font-weight: 800; 
-            letter-spacing: -0.5px; 
-        }
-
-        /* --- ADMIN HUD --- */
-        .admin-hud { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #000; border: 1px solid var(--accent); padding: 15px 30px; border-radius: 50px; display: none; z-index: 9999; gap: 15px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); align-items: center; }
-        body.edit-mode .admin-hud { display: flex; }
-        .admin-btn { background: #111; color: white; border: 1px solid #333; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- THEME CONTROLS --- */
-        .theme-hub { position: fixed; top: 30px; right: 30px; z-index: 1000; background: var(--card); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border); display: flex; gap: 15px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        /* THEME HUB */
+        .theme-hub { position: fixed; top: 80px; right: 30px; z-index: 1000; background: var(--card); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border); display: flex; gap: 15px; align-items: center; }
         .t-btn { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
         .t-btn.active { border-color: var(--accent); transform: scale(1.3); }
 
-        /* --- LAYOUT --- */
-        .hero { min-height: 50vh; display: flex; align-items: center; padding: 0 10%; gap: 50px; margin-top: 100px; }
-        .profile-zone { width: 200px; height: 200px; border-radius: 60px; border: 4px solid var(--accent); overflow: hidden; background: var(--card); position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.08); flex-shrink: 0; }
-        .profile-zone img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 5; }
-
+        /* CONTENT BOXES & HOVER */
         .dashboard { padding: 40px 10%; display: grid; grid-template-columns: repeat(12, 1fr); gap: 25px; }
-        .span-4 { grid-column: span 4; } .span-6 { grid-column: span 6; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
         
-        .del-btn { display: none; position: absolute; top: 20px; right: 20px; background: #ff4757; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
-        body.edit-mode .del-btn { display: block; }
+        .box { 
+            background: var(--card); border: 1px solid var(--border); 
+            border-radius: 30px; padding: 30px; position: relative;
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            overflow: hidden;
+        }
 
-        /* --- TICKER --- */
+        .box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        /* RESIZABLE LOGIC (ADMIN ONLY) */
+        body.edit-mode .box { 
+            resize: both; overflow: auto; 
+            border: 2px dashed var(--accent);
+        }
+
+        .box h2 { color: var(--text-h); margin-bottom: 15px; font-weight: 800; }
+        .span-4 { grid-column: span 4; } .span-6 { grid-column: span 6; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
+
+        /* PROFILE */
+        .hero { display: flex; align-items: center; padding: 120px 10% 40px; gap: 50px; }
+        .profile-img-wrap { 
+            width: 180px; height: 180px; border-radius: 50px; 
+            border: 4px solid var(--accent); overflow: hidden; position: relative;
+        }
+        .profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-img-wrap input { position: absolute; inset: 0; opacity: 0; cursor: pointer; display: none; }
+        body.edit-mode .profile-img-wrap input { display: block; }
+
+        /* TICKER */
         .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 15px 0; overflow: hidden; z-index: 100; }
-        .ticker { display: inline-block; animation: scroll 50s linear infinite; font-weight: 800; font-size: 0.75rem; color: var(--accent); letter-spacing: 2.5px; text-transform: uppercase; }
+        .ticker { display: inline-block; animation: scroll 60s linear infinite; font-weight: 800; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        @media (max-width: 1000px) {
-            .hero { flex-direction: column; text-align: center; }
-            .dashboard { display: flex; flex-direction: column; }
-        }
+        @media (max-width: 900px) { .hero { flex-direction: column; text-align: center; } .dashboard { display: flex; flex-direction: column; } }
     </style>
 </head>
 <body data-theme="default">
 
-    <div class="admin-hud">
-        <button class="admin-btn" onclick="addBox(6)">+ Add Section</button>
-        <button class="admin-btn" onclick="refreshQR()">Refresh QR</button>
-        <button class="admin-btn" style="background:var(--accent); border:none;" onclick="saveChanges()">SAVE PROJECT (Ctrl+S)</button>
+    <div class="admin-top-bar">
+        <div>
+            <span>Global Background:</span>
+            <input type="file" onchange="setGlobalBg(event)" style="font-size: 10px;">
+        </div>
+        <button class="save-btn" onclick="exitAdmin()">SAVE & EXIT</button>
     </div>
 
     <div class="theme-hub">
-        <span style="font-size: 8px; font-weight: 800; opacity: 0.5;">ADMIN: HOLD DARK ICON 5S</span>
         <div class="t-btn" id="edit-trigger" data-theme="dark" style="background: #0f172a;"></div>
         <div class="t-btn active" data-theme="default" style="background: #2563eb;"></div>
         <div class="t-btn" data-theme="lite" style="background: #cbd5e1;"></div>
     </div>
 
     <section class="hero">
-        <div class="profile-zone">
-            <img id="profile-img" src="https://via.placeholder.com/200" alt="Sudheep P. Profile">
-            <input type="file" onchange="handleUpload(event)">
+        <div class="profile-img-wrap">
+            <img id="profile-img" src="https://via.placeholder.com/200" alt="Sudheep P.">
+            <input type="file" onchange="updateProfile(event)">
         </div>
         <div>
-            <h1 contenteditable="true" id="user-name">SUDHEEP P.</h1>
-            <h3 contenteditable="true" style="color: var(--accent); font-weight: 700;">Sr. IT System Administrator</h3>
-            <p contenteditable="true" style="margin-top: 15px; font-size: 1.1rem; max-width: 600px;">
-                Strategic Infrastructure Architect with 18 years of technical expertise. Currently orchestrating mission-critical systems at Oman International Hospital.
+            <h1 id="user-name">SUDHEEP P.</h1>
+            <h3 style="color: var(--accent)">Sr. IT System Administrator</h3>
+            <p style="max-width: 600px;">
+                Infrastructure specialist managing mission-critical Data Centers for <strong>Oman International Hospital</strong>. 18 years of cross-border technical leadership.
             </p>
         </div>
     </section>
 
     <section class="dashboard" id="main-grid">
-        
         <div class="box span-8">
-            <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-            <h2>Strategic Infrastructure</h2>
-            <p contenteditable="true">
-                Specialized in the installation and configuration of enterprise datacenters using Windows Servers (ADDS, DNS, DHCP, GPO). 
-                Expert in managing VMware virtual environments, Veeam backup/replication, and FortiGate firewall monitoring.
-            </p>
+            <h2>Core Infrastructure</h2>
+            <p>Installation and configuration of Data Centers with Windows Servers (ADDS, DNS, DHCP, GPO). Expert in VMware Management and Veeam Backup/Replication for healthcare-grade availability.</p>
         </div>
 
-        <div class="box span-4" style="text-align: center; display: flex; flex-direction: column; justify-content: center;">
-            <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-            <div contenteditable="true" style="font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1;">18+</div>
-            <div contenteditable="true" style="font-weight: 800; font-size: 0.75rem; letter-spacing: 2px; margin-top: 10px;">YEARS EXPERIENCE</div>
+        <div class="box span-4" style="text-align: center;">
+            <div style="font-size: 3.5rem; font-weight: 800; color: var(--accent);">18+</div>
+            <div style="font-weight: 800; font-size: 0.7rem; letter-spacing: 2px;">YEARS OF MASTERY</div>
         </div>
 
         <div class="box span-6">
-            <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-            <h2>Technical Skills</h2>
-            <ul contenteditable="true" style="padding-left: 20px; font-size: 0.95rem;">
-                <li>HPE Synergy & Sangfor HCI Management</li>
-                <li>SAN, DAS, and NAS Storage Configuration</li>
-                <li>CCTV & Access Control Systems (200+ Projects)</li>
-                <li>Aruba Core Switching & VLAN Management</li>
-            </ul>
+            <h2>ELV & Security Expert</h2>
+            <p>Commissioned IP CCTV systems for over 200 projects. Certified in Exacq Vision, Hikvision, and Dahua. Deep expertise in Fiber backbone creation and Enterprise NVR storage.</p>
         </div>
 
         <div class="box span-6">
-            <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
-            <h2>Professional History</h2>
-            <p contenteditable="true" style="font-size: 0.95rem;">
-                • <strong>Sr. IT Administrator</strong>, Oman International Hospital<br>
-                • <strong>Project Engineer</strong>, Majan Security & Telecom<br>
-                • <strong>Associate Storage Engineer</strong>, Knitlogix Pvt Ltd<br>
-                • <strong>Education:</strong> BA Degree & MCSA/CCNA Certified
-            </p>
+            <h2>Technical Stack</h2>
+            <p>• HPE Synergy & Sangfor HCI<br>• FortiGate Firewall Monitoring<br>• Cisco Call Manager & IP Telephony<br>• SAN/NAS Storage Provisioning</p>
         </div>
 
-        <div class="box span-12" style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between;">
-            <div style="flex: 1; min-width: 300px;">
-                <h2>Professional Connection</h2>
-                <p contenteditable="true"><strong>Email:</strong> sudheepnbr@gmail.com</p>
-                <p contenteditable="true"><strong>Mobile:</strong> +968 93566572</p>
-                <p contenteditable="true"><strong>Location:</strong> Muscat, Oman</p>
+        <div class="box span-12" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h2>Contact Info</h2>
+                <p><strong>Email:</strong> sudheepnbr@gmail.com</p>
+                <p><strong>Phone:</strong> +968 93566572</p>
+                <p><strong>Nationality:</strong> Indian (Oman License)</p>
             </div>
-            <div style="text-align: center;">
-                <div id="qrcode"></div>
-                <div style="font-size: 9px; margin-top: 10px; font-weight: 800; opacity: 0.5;">SCAN FOR V-CARD</div>
-            </div>
-            <div style="flex: 1; border-left: 1px solid var(--border); padding-left: 30px;">
-                <h4 style="margin-bottom: 10px;">Box Customization</h4>
-                <p style="font-size: 10px; margin-bottom: 5px;">Upload Background Image:</p>
-                <input type="file" onchange="setCustomBg(event, this.parentElement.parentElement)" style="font-size: 10px;">
-            </div>
+            <div id="qrcode"></div>
         </div>
-
     </section>
 
     <div class="ticker-wrap">
-        <div class="ticker" contenteditable="true">
-            SYSTEM STATUS: ALL ARCHITECTURAL NODES NOMINAL // CURRENT PROJECT: OMAN INTERNATIONAL HOSPITAL INFRASTRUCTURE // CORE STACK: HPE SYNERGY, SANGFOR HCI, FORTIGATE //
+        <div class="ticker">
+            SYSTEM STATUS: OPTIMAL // OMAN INTERNATIONAL HOSPITAL INFRASTRUCTURE // VMWARE // FORTIGATE // HPE SYNERGY // SANGFOR // VEEAM // 18 YEARS EXPERIENCE //
         </div>
     </div>
 
     <script>
-        // --- THEME LOGIC ---
+        // --- ADMIN TRIGGER ---
+        const trigger = document.getElementById('edit-trigger');
+        let pressTimer;
+        trigger.onmousedown = () => {
+            pressTimer = setTimeout(() => {
+                document.body.classList.add('edit-mode');
+                document.querySelectorAll('[contenteditable="false"], p, h1, h2, h3, li').forEach(e => e.contentEditable = "true");
+                alert("ADMIN MODE: Drag box corners to resize. Edit text. Upload BG at top.");
+            }, 5000);
+        };
+        trigger.onmouseup = () => clearTimeout(pressTimer);
+
+        function exitAdmin() {
+            document.body.classList.remove('edit-mode');
+            document.querySelectorAll('[contenteditable="true"]').forEach(e => e.contentEditable = "false");
+            saveChanges();
+        }
+
+        // --- GLOBAL SETTINGS ---
+        function setGlobalBg(e) {
+            const reader = new FileReader();
+            reader.onload = () => document.body.style.backgroundImage = `url(${reader.result})`;
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function updateProfile(e) {
+            const reader = new FileReader();
+            reader.onload = () => document.getElementById('profile-img').src = reader.result;
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        // --- THEME ---
         document.querySelectorAll('.t-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.body.setAttribute('data-theme', btn.getAttribute('data-theme'));
@@ -207,55 +210,15 @@
             });
         });
 
-        // --- CMS TRIGGER (5S HOLD ON DARK ICON) ---
-        const trigger = document.getElementById('edit-trigger');
-        let pressTimer;
-        trigger.onmousedown = () => {
-            pressTimer = setTimeout(() => {
-                document.body.classList.toggle('edit-mode');
-                document.querySelectorAll('[contenteditable]').forEach(e => e.contentEditable = "true");
-                alert("CMS ACTIVE: Edit text directly, upload photos, or add boxes.");
-            }, 5000);
-        };
-        trigger.onmouseup = () => clearTimeout(pressTimer);
-
-        // --- MEDIA ---
-        function handleUpload(e) {
-            const reader = new FileReader();
-            reader.onload = () => document.getElementById('profile-img').src = reader.result;
-            reader.readAsDataURL(e.target.files[0]);
-        }
-
-        function setCustomBg(e, target) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                target.style.backgroundImage = `url(${reader.result})`;
-                target.style.color = '#fff';
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
-
-        // --- LAYOUT ---
-        function addBox(span) {
-            const grid = document.getElementById('main-grid');
-            const box = document.createElement('div');
-            box.className = `box span-${span}`;
-            box.innerHTML = `<button class="del-btn" onclick="this.parentElement.remove()">✕</button><h2 contenteditable="true">New Entry</h2><p contenteditable="true">Professional details here.</p>`;
-            grid.insertBefore(box, grid.lastElementChild);
-        }
-
         // --- QR ---
-        function refreshQR() {
-            const qrDiv = document.getElementById('qrcode');
-            qrDiv.innerHTML = "";
-            const name = document.getElementById('user-name').innerText;
-            new QRCode(qrDiv, { text: `Name: ${name}\nPhone: +96893566572`, width: 110, height: 110 });
+        function genQR() {
+            const q = document.getElementById('qrcode'); q.innerHTML = "";
+            new QRCode(q, { text: "TEL:+96893566572", width: 100, height: 100 });
         }
-        refreshQR();
+        genQR();
 
         // --- EXPORT ---
         function saveChanges() {
-            document.body.classList.remove('edit-mode');
             const code = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
             const blob = new Blob([code], {type: 'text/html'});
             const a = document.createElement('a');
@@ -263,7 +226,6 @@
             a.download = 'index.html';
             a.click();
         }
-        document.addEventListener('keydown', e => { if((e.ctrlKey || e.metaKey) && e.key === 's'){ e.preventDefault(); saveChanges(); }});
     </script>
 </body>
 </html>
