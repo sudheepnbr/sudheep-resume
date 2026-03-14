@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Sudheep Padmalayam | Resume</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+header{
+padding:40px;
+}
+
+#profilePhoto{
+width:150px;
+border-radius:50%;
+border:4px solid gold;
+cursor:pointer;
+}
+
+section{
+max-width:1000px;
+margin:auto;
+padding:20px;
+}
+
+.skill{
+background:#1e293b;
+padding:10px 16px;
+margin:5px;
+display:inline-block;
+border-radius:20px;
+}
+
+.project{
+background:#1e293b;
+padding:20px;
+margin:10px;
+border-radius:10px;
+}
+
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+}
+
+.modal-content{
+background:white;
+color:black;
+width:650px;
+margin:60px auto;
+padding:20px;
+border-radius:10px;
+text-align:left;
+}
+
+.card{
+background:white;
+color:black;
+padding:20px;
+width:300px;
+border-radius:10px;
+margin-top:10px;
+}
+
+button{
+padding:6px 12px;
+margin:5px;
+}
+
+input{
+width:95%;
+padding:6px;
+margin-bottom:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img id="profilePhoto">
+
+<h1 id="name"></h1>
+<h3 id="title"></h3>
+
+</header>
+
+<section>
+
+<h2>Skills</h2>
+<div id="skills"></div>
+
+<h2>Projects</h2>
+<div id="projects"></div>
+
+<h2>ELV Systems</h2>
+<div id="elv"></div>
+
+</section>
+
+
+<!-- ADMIN PANEL -->
+
+<div id="adminModal" class="modal">
+
+<div class="modal-content">
+
+<h2>Resume Admin Panel</h2>
+
+<label>Name</label>
+<input id="nameInput">
+
+<label>Title</label>
+<input id="titleInput">
+
+<label>Theme Color</label>
+<input type="color" id="themeInput">
+
+<label>Upload Profile Photo</label>
+<input type="file" id="photoUpload">
+
+<hr>
+
+<h3>Skills</h3>
+
+<input id="skillInput">
+<button onclick="addSkill()">Add</button>
+
+<ul id="skillList"></ul>
+
+<hr>
+
+<h3>Projects</h3>
+
+<input id="projectTitle" placeholder="Title">
+<input id="projectDesc" placeholder="Description">
+
+<button onclick="addProject()">Add</button>
+
+<ul id="projectList"></ul>
+
+<hr>
+
+<h3>ELV Systems</h3>
+
+<input id="elvInput">
+<button onclick="addELV()">Add</button>
+
+<ul id="elvList"></ul>
+
+<hr>
+
+<h3>Business Card</h3>
+
+<input type="file" id="logoUpload">
+
+<div id="cardPreview" class="card">
+
+<img id="cardLogo" width="60">
+
+<h3 id="cardName"></h3>
+<p id="cardTitle"></p>
+
+</div>
+
+<button onclick="downloadCard()">Download Card</button>
+
+<hr>
+
+<button onclick="saveData()">Save</button>
+<button onclick="exportData()">Export JSON</button>
+<input type="file" id="importJSON">
+<button onclick="importData()">Import JSON</button>
+
+<button onclick="closeAdmin()">Close</button>
+
+</div>
+
+</div>
+
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<script>
+
+let data = JSON.parse(localStorage.getItem("resumeData")) || {
+
+name:"Sudheep Padmalayam",
+title:"Senior IT Infrastructure Administrator",
+theme:"#0f172a",
+photo:"",
+
+skills:[
+"VMware vSphere",
+"Microsoft 365",
+"FortiGate Firewall"
+],
+
+projects:[
+{
+title:"OIH Switch Health Platform",
+desc:"Flask monitoring system"
+}
+],
+
+elv:[
+"Enterprise CCTV",
+"Access Control Systems",
+"Master Clock System"
+]
+
+}
+
+
+// RENDER PAGE
+
+function render(){
+
+document.getElementById("name").innerText=data.name
+document.getElementById("title").innerText=data.title
+
+document.body.style.background=data.theme
+
+if(data.photo){
+document.getElementById("profilePhoto").src=data.photo
+}else{
+document.getElementById("profilePhoto").src="https://via.placeholder.com/150"
+}
+
+
+// skills
+
+let skillHTML=""
+
+data.skills.forEach(s=>{
+skillHTML+=`<span class="skill">${s}</span>`
+})
+
+document.getElementById("skills").innerHTML=skillHTML
+
+
+// projects
+
+let projectHTML=""
+
+data.projects.forEach(p=>{
+
+projectHTML+=`
+<div class="project">
+<h4>${p.title}</h4>
+<p>${p.desc}</p>
+</div>
+`
+
+})
+
+document.getElementById("projects").innerHTML=projectHTML
+
+
+// ELV
+
+let elvHTML=""
+
+data.elv.forEach(e=>{
+elvHTML+=`<span class="skill">${e}</span>`
+})
+
+document.getElementById("elv").innerHTML=elvHTML
+
+
+// business card
+
+document.getElementById("cardName").innerText=data.name
+document.getElementById("cardTitle").innerText=data.title
+
+}
+
+render()
+
+
+// PROFILE CLICK
+
+document.getElementById("profilePhoto").onclick=function(){
+
+document.getElementById("adminModal").style.display="block"
+
+document.getElementById("nameInput").value=data.name
+document.getElementById("titleInput").value=data.title
+document.getElementById("themeInput").value=data.theme
+
+loadLists()
+
+}
+
+
+// CLOSE ADMIN
+
+function closeAdmin(){
+document.getElementById("adminModal").style.display="none"
+}
+
+
+// LOAD LISTS
+
+function loadLists(){
+
+let html=""
+
+data.skills.forEach((s,i)=>{
+html+=`<li>${s} <button onclick="deleteSkill(${i})">X</button></li>`
+})
+
+document.getElementById("skillList").innerHTML=html
+
+
+html=""
+
+data.projects.forEach((p,i)=>{
+html+=`<li>${p.title} <button onclick="deleteProject(${i})">X</button></li>`
+})
+
+document.getElementById("projectList").innerHTML=html
+
+
+html=""
+
+data.elv.forEach((e,i)=>{
+html+=`<li>${e} <button onclick="deleteELV(${i})">X</button></li>`
+})
+
+document.getElementById("elvList").innerHTML=html
+
+}
+
+
+// CRUD SKILLS
+
+function addSkill(){
+
+let val=document.getElementById("skillInput").value
+
+data.skills.push(val)
+
+loadLists()
+
+}
+
+function deleteSkill(i){
+
+data.skills.splice(i,1)
+
+loadLists()
+
+}
+
+
+// CRUD PROJECTS
+
+function addProject(){
+
+let title=document.getElementById("projectTitle").value
+let desc=document.getElementById("projectDesc").value
+
+data.projects.push({title,desc})
+
+loadLists()
+
+}
+
+function deleteProject(i){
+
+data.projects.splice(i,1)
+
+loadLists()
+
+}
+
+
+// CRUD ELV
+
+function addELV(){
+
+let val=document.getElementById("elvInput").value
+
+data.elv.push(val)
+
+loadLists()
+
+}
+
+function deleteELV(i){
+
+data.elv.splice(i,1)
+
+loadLists()
+
+}
+
+
+// PHOTO UPLOAD
+
+document.getElementById("photoUpload").addEventListener("change",function(){
+
+let reader=new FileReader()
+
+reader.onload=function(e){
+
+data.photo=e.target.result
+
+render()
+
+}
+
+reader.readAsDataURL(this.files[0])
+
+})
+
+
+// LOGO UPLOAD
+
+document.getElementById("logoUpload").addEventListener("change",function(){
+
+let reader=new FileReader()
+
+reader.onload=function(e){
+
+document.getElementById("cardLogo").src=e.target.result
+
+}
+
+reader.readAsDataURL(this.files[0])
+
+})
+
+
+// SAVE
+
+function saveData(){
+
+data.name=document.getElementById("nameInput").value
+data.title=document.getElementById("titleInput").value
+data.theme=document.getElementById("themeInput").value
+
+localStorage.setItem("resumeData",JSON.stringify(data))
+
+render()
+
+closeAdmin()
+
+}
+
+
+// EXPORT JSON
+
+function exportData(){
+
+let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"})
+
+let a=document.createElement("a")
+
+a.href=URL.createObjectURL(blob)
+
+a.download="resume-backup.json"
+
+a.click()
+
+}
+
+
+// IMPORT JSON
+
+function importData(){
+
+let file=document.getElementById("importJSON").files[0]
+
+let reader=new FileReader()
+
+reader.onload=function(e){
+
+data=JSON.parse(e.target.result)
+
+localStorage.setItem("resumeData",JSON.stringify(data))
+
+render()
+
+}
+
+reader.readAsText(file)
+
+}
+
+
+// BUSINESS CARD DOWNLOAD
+
+function downloadCard(){
+
+html2canvas(document.getElementById("cardPreview")).then(canvas=>{
+
+let a=document.createElement("a")
+
+a.href=canvas.toDataURL()
+
+a.download="business-card.png"
+
+a.click()
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
