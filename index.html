@@ -3,215 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infrastructure Architect | Next-Gen Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Sudheep | Infrastructure Architect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        /* --- CORE THEME ENGINE --- */
         :root {
-            --bg: #050508;
-            --card: rgba(255, 255, 255, 0.03);
-            --accent: #8b5cf6; /* Finora Purple */
-            --accent-glow: rgba(139, 92, 246, 0.3);
-            --text-h: #ffffff;
-            --text-p: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
-            --font-main: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        [data-theme="corporate"] {
-            --bg: #f8fafc; --card: #ffffff; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1);
-            --text-h: #0f172a; --text-p: #475569; --border: #e2e8f0;
-        }
-
-        [data-theme="infra"] {
             --bg: #0f172a; --card: #1e293b; --accent: #0ea5e9; --accent-glow: rgba(14, 165, 233, 0.2);
-            --text-h: #f1f5f9; --text-p: #94a3b8; --border: #334155;
+            --text-h: #f1f5f9; --text-p: #94a3b8; --border: #334155; --font-main: 'Plus Jakarta Sans', sans-serif;
         }
+        [data-theme="dark"] { --bg: #050508; --card: rgba(255, 255, 255, 0.03); --accent: #8b5cf6; --text-h: #ffffff; --text-p: #94a3b8; --border: rgba(255,255,255,0.1); }
+        [data-theme="gold"] { --bg: #0a0a05; --card: #14140f; --accent: #d4af37; --text-h: #ffffff; --text-p: #a1a196; --border: #2a2a20; }
 
-        [data-theme="gold"] {
-            --bg: #0a0a05; --card: #14140f; --accent: #d4af37; --accent-glow: rgba(212, 175, 55, 0.2);
-            --text-h: #ffffff; --text-p: #a1a196; --border: #2a2a20;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s ease; }
+        body { background-color: var(--bg); color: var(--text-p); font-family: var(--font-main); overflow-x: hidden; line-height: 1.6; }
+        
+        /* ADMIN HUD */
+        .admin-hud { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #111; border: 1px solid var(--accent); padding: 15px; border-radius: 20px; display: none; z-index: 9999; gap: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        body.edit-mode .admin-hud { display: flex; flex-wrap: wrap; justify-content: center; }
+        .admin-btn { background: #222; color: white; border: 1px solid #444; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .admin-btn:hover { border-color: var(--accent); }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.4s ease; }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text-p);
-            font-family: var(--font-main);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* --- THEME SELECTOR (Finora Style) --- */
-        .theme-hub {
-            position: fixed; top: 30px; right: 30px; z-index: 1000;
-            background: var(--card); backdrop-filter: blur(15px);
-            padding: 8px 15px; border-radius: 50px; border: 1px solid var(--border);
-            display: flex; gap: 12px; align-items: center;
-        }
-
+        /* THEME HUB */
+        .theme-hub { position: fixed; top: 30px; right: 30px; z-index: 1000; background: var(--card); backdrop-filter: blur(15px); padding: 8px 15px; border-radius: 50px; border: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
         .t-btn { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
         .t-btn.active { border-color: #fff; transform: scale(1.2); }
 
-        /* --- BACKGROUND GLOWS --- */
-        .glow {
-            position: fixed; width: 40vw; height: 40vw; border-radius: 50%;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            z-index: -1; filter: blur(100px); pointer-events: none;
-        }
+        /* PROFILE SECTION */
+        .hero { min-height: 80vh; display: flex; align-items: center; padding: 0 10%; gap: 50px; margin-top: 50px; }
+        .profile-zone { width: 180px; height: 180px; border-radius: 40px; border: 2px solid var(--accent); overflow: hidden; position: relative; background: #222; cursor: pointer; }
+        .profile-zone img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
-        /* --- HERO SECTION --- */
-        .hero {
-            min-height: 90vh; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 10%; gap: 50px;
-        }
+        /* DASHBOARD GRID */
+        .dashboard { padding: 50px 10%; display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+        .box { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 30px; position: relative; background-size: cover; background-position: center; }
+        .span-4 { grid-column: span 4; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
+        .del-btn { display: none; position: absolute; top: 10px; right: 10px; background: red; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
+        body.edit-mode .del-btn { display: block; }
 
-        .hero-content { flex: 1; }
-        .hero-visual { flex: 1; display: flex; justify-content: center; position: relative; }
+        /* BOTTOM TICKER */
+        .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 10px 0; overflow: hidden; white-space: nowrap; }
+        .ticker { display: inline-block; animation: scroll 30s linear infinite; font-weight: 800; font-size: 0.8rem; color: var(--accent); letter-spacing: 2px; }
+        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        .tag-new {
-            background: var(--card); border: 1px solid var(--border);
-            padding: 5px 15px; border-radius: 20px; font-size: 0.75rem;
-            color: var(--accent); margin-bottom: 20px; display: inline-block;
-        }
+        /* CONTACT SECTION */
+        .contact-grid { grid-column: span 12; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
+        #qrcode { background: white; padding: 10px; border-radius: 10px; display: inline-block; }
 
-        h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; color: var(--text-h); line-height: 1.1; margin-bottom: 25px; }
-
-        /* --- CTA BUTTON --- */
-        .btn-main {
-            background: var(--accent); color: white; border: none;
-            padding: 15px 35px; border-radius: 12px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 10px 20px var(--accent-glow);
-            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
-        }
-
-        /* --- BENTO DASHBOARD (For 5-Page Content) --- */
-        .dashboard {
-            padding: 80px 10%; display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px;
-        }
-
-        .box {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 30px; padding: 40px; backdrop-filter: blur(20px);
-            position: relative; overflow: hidden;
-        }
-
-        .box:hover { border-color: var(--accent); transform: translateY(-5px); }
-
-        .span-7 { grid-column: span 7; }
-        .span-5 { grid-column: span 5; }
-        .span-12 { grid-column: span 12; }
-
-        .icon-box {
-            width: 50px; height: 50px; background: var(--accent-glow);
-            border-radius: 12px; display: flex; align-items: center;
-            justify-content: center; margin-bottom: 20px; color: var(--accent);
-        }
-
-        /* --- FOOTER LOGOS --- */
-        .partners {
-            padding: 50px 10%; display: flex; justify-content: space-between;
-            opacity: 0.5; filter: grayscale(1);
-        }
-
-        @media (max-width: 1000px) {
-            .hero { flex-direction: column; text-align: center; padding-top: 100px; }
-            .dashboard { display: flex; flex-direction: column; }
-        }
+        [contenteditable="true"] { outline: none; }
+        body.edit-mode [contenteditable="true"]:focus { border-bottom: 2px solid var(--accent); }
     </style>
 </head>
-<body data-theme="dark">
+<body data-theme="infra">
 
-    <div class="glow" style="top: -10%; left: -10%;"></div>
-    <div class="glow" style="bottom: 10%; right: 0;"></div>
+    <div class="admin-hud">
+        <button class="admin-btn" onclick="addBox(4)">+ Add Small Box</button>
+        <button class="admin-btn" onclick="addBox(8)">+ Add Large Box</button>
+        <button class="admin-btn" onclick="changeBoxStyle()">Change Style</button>
+        <button class="admin-btn" onclick="generateQR()">Update QR</button>
+        <button class="admin-btn" style="background:var(--accent)" onclick="saveExport()">SAVE TO GITHUB (Ctrl+S)</button>
+    </div>
 
     <div class="theme-hub">
-        <span style="font-size: 10px; font-weight: 800; opacity: 0.5;">THEME</span>
-        <div class="t-btn active" data-theme="dark" style="background: #8b5cf6;"></div>
-        <div class="t-btn" data-theme="corporate" style="background: #2563eb;"></div>
-        <div class="t-btn" data-theme="infra" style="background: #0ea5e9;"></div>
+        <span style="font-size: 9px; font-weight: 800; opacity: 0.5;">EDIT (HOLD PURPLE 5S)</span>
+        <div class="t-btn" id="edit-trigger" data-theme="dark" style="background: #8b5cf6;"></div>
+        <div class="t-btn active" data-theme="infra" style="background: #0ea5e9;"></div>
         <div class="t-btn" data-theme="gold" style="background: #d4af37;"></div>
     </div>
 
     <section class="hero">
-        <div class="hero-content">
-            <div class="tag-new">New: Infrastructure Automation 2.0</div>
-            <h1>Unlock a New Standard of <span style="color: var(--accent)">IT Performance.</span></h1>
-            <p style="margin-bottom: 30px; font-size: 1.1rem;">
-                Strategic Infrastructure Architect managing mission-critical Data Centers for <strong>Oman International Hospital</strong>. Seamless hardware orchestration for high-stakes environments.
-            </p>
-            <button class="btn-main">Review Architecture</button>
-            <div style="margin-top: 40px; display: flex; align-items: center; gap: 15px;">
-                <div style="display: flex;">
-                    <div style="width: 35px; height: 35px; border-radius: 50%; background: #444; border: 2px solid var(--bg);"></div>
-                    <div style="width: 35px; height: 35px; border-radius: 50%; background: #666; border: 2px solid var(--bg); margin-left: -10px;"></div>
-                </div>
-                <div style="font-size: 12px; font-weight: 600;">15+ Years <br> <span style="opacity: 0.6;">Enterprise Mastery</span></div>
-            </div>
+        <div class="profile-zone">
+            <img id="profile-img" src="https://via.placeholder.com/180" alt="Profile">
+            <input type="file" id="img-upload" onchange="uploadPhoto(event)">
+        </div>
+        <div>
+            <h1 contenteditable="true" id="user-name">Sudheep N.B.R</h1>
+            <h3 contenteditable="true" style="color: var(--accent)">Infrastructure Architect & Security Specialist</h3>
+            <p contenteditable="true" style="margin-top: 15px; max-width: 600px;">Managing mission-critical systems for Oman International Hospital. Expert in Data Center orchestration and automation.</p>
+        </div>
+    </section>
+
+    <section class="dashboard" id="main-grid">
+        <div class="box span-8">
+            <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
+            <h2 contenteditable="true">Professional Experience</h2>
+            <p contenteditable="true">Managed Aruba Core switches, HPE Synergy compute, and Sangfor HCI infrastructure. Guaranteed 99.9% uptime for hospital medical systems.</p>
         </div>
 
-        <div class="hero-visual">
-            <div style="width: 350px; height: 350px; background: var(--accent-glow); border-radius: 40px; transform: rotateX(45deg) rotateZ(-30deg); box-shadow: 0 50px 100px rgba(0,0,0,0.5); border: 2px solid var(--accent); position: relative;">
-                <div style="position: absolute; top: 10%; left: 10%; width: 80%; height: 20%; background: rgba(255,255,255,0.1); border-radius: 10px;"></div>
-                <div style="position: absolute; bottom: 10%; left: 10%; width: 50%; height: 40%; background: var(--accent); border-radius: 10px; opacity: 0.3;"></div>
+        <div class="box span-4" style="text-align: center;">
+            <button class="del-btn" onclick="this.parentElement.remove()">✕</button>
+            <div contenteditable="true" style="font-size: 3rem; font-weight: 800; color: var(--accent);">15+</div>
+            <div contenteditable="true">Years Industry Mastery</div>
+        </div>
+
+        <div class="contact-grid">
+            <div class="box span-4">
+                <h4 style="color:var(--accent)">Contact Details</h4>
+                <p contenteditable="true">Email: sudheep@padmalayam.com</p>
+                <p contenteditable="true">Phone: +968 1234 5678</p>
+                <p contenteditable="true">Loc: Muscat, Oman</p>
+            </div>
+            <div class="box span-4" style="text-align: center;">
+                <h4 style="margin-bottom:10px;">Connect Mobile</h4>
+                <div id="qrcode"></div>
+                <p style="font-size: 10px; margin-top: 5px;">Scan for Contact Card</p>
+            </div>
+            <div class="box span-4">
+                <h4 style="color:var(--accent)">Set Box BG Image</h4>
+                <input type="file" onchange="setBoxBg(event, this.parentElement)" style="font-size: 10px;">
+                <p style="font-size: 10px; margin-top: 10px;">Upload image to use as background for this specific box.</p>
             </div>
         </div>
     </section>
 
-    <section class="dashboard">
-        <div class="box span-7">
-            <div class="icon-box">◈</div>
-            <h2>Infrastructure Orchestration</h2>
-            <p style="margin-bottom: 20px;">Commanding the hardware lifecycle at OIH. Managed P2V migrations, Aruba core switch trunks, and high-density SAN environments.</p>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <span style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 12px;">HPE Synergy</span>
-                <span style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 12px;">Sangfor HCI</span>
-                <span style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 12px;">FortiGate VDOM</span>
-            </div>
+    <div class="ticker-wrap">
+        <div class="ticker" contenteditable="true">
+            SYSTEM STATUS: ALL INFRASTRUCTURE NODES OPERATIONAL // OMAN INTERNATIONAL HOSPITAL SECURITY LEVEL: HIGH // EXPERT IN VMWARE, FORTIGATE, ARUBA, AND PYTHON AUTOMATION //
         </div>
-
-        <div class="box span-5" style="text-align: center;">
-            <div style="font-size: 4rem; font-weight: 800; color: var(--accent);">99.9%</div>
-            <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; font-weight: 800;">Uptime Guaranteed</div>
-            <div style="margin-top: 30px; height: 2px; background: var(--border);"></div>
-            <div style="margin-top: 30px; font-size: 0.9rem;">Zero critical failure in hospital ops.</div>
-        </div>
-
-        <div class="box span-5">
-            <div class="icon-box">⚡</div>
-            <h2>Intelli-Automation</h2>
-            <p style="font-size: 0.9rem;">Developing Python-based portals for real-time network health. Leveraging Netmiko and Ollama for secure, on-prem AI assistance.</p>
-        </div>
-
-        <div class="box span-7">
-            <div class="icon-box">📂</div>
-            <h2>Padmalayam Archives</h2>
-            <p style="font-size: 0.9rem;">Private Cloud Architect: Building redundant, secure family cloud ecosystems using TrueNAS and CasaOS. Preserving digital legacy through hardware mastery.</p>
-        </div>
-    </section>
-
-    <footer class="partners">
-        <div>HPE_SYNERGY</div>
-        <div>ARUBA_CORE</div>
-        <div>SANGFOR_HCI</div>
-        <div>VMWARE_V8</div>
-        <div>FORTIGATE_SEC</div>
-    </footer>
+    </div>
 
     <script>
-        const buttons = document.querySelectorAll('.t-btn');
-        const body = document.body;
-
-        buttons.forEach(btn => {
+        // 1. Theme Logic
+        document.querySelectorAll('.t-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const theme = btn.getAttribute('data-theme');
-                body.setAttribute('data-theme', theme);
-                
-                buttons.forEach(b => b.classList.remove('active'));
+                document.body.setAttribute('data-theme', btn.getAttribute('data-theme'));
+                document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             });
         });
+
+        // 2. Secret Edit Mode (5s hold on Purple)
+        const trigger = document.getElementById('edit-trigger');
+        let timer;
+        trigger.onmousedown = () => timer = setTimeout(() => {
+            document.body.classList.toggle('edit-mode');
+            document.querySelectorAll('[contenteditable]').forEach(e => e.contentEditable = "true");
+            alert("ADMIN MODE ACTIVE: You can now change layouts, images, and text.");
+        }, 5000);
+        trigger.onmouseup = () => clearTimeout(timer);
+
+        // 3. Photo Upload
+        function uploadPhoto(event) {
+            const reader = new FileReader();
+            reader.onload = function() { document.getElementById('profile-img').src = reader.result; };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // 4. Box Style / Background
+        function setBoxBg(event, targetBox) {
+            const reader = new FileReader();
+            reader.onload = function() { targetBox.style.backgroundImage = `url(${reader.result})`; targetBox.style.color = "white"; };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function createBlock(span) {
+            const grid = document.getElementById('main-grid');
+            const box = document.createElement('div');
+            box.className = `box span-${span}`;
+            box.innerHTML = `<button class="del-btn" onclick="this.parentElement.remove()">✕</button><h3 contenteditable="true">New Title</h3><p contenteditable="true">New Content</p>`;
+            grid.insertBefore(box, grid.lastElementChild);
+        }
+
+        function addBox(s) { createBlock(s); }
+
+        // 5. QR Code Generator
+        function generateQR() {
+            const qrDiv = document.getElementById('qrcode');
+            qrDiv.innerHTML = "";
+            const name = document.getElementById('user-name').innerText;
+            new QRCode(qrDiv, { text: `Name: ${name}`, width: 100, height: 100 });
+        }
+        generateQR();
+
+        // 6. Save Export
+        function saveExport() {
+            document.body.classList.remove('edit-mode');
+            const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const blob = new Blob([html], {type: 'text/html'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'index.html';
+            a.click();
+        }
     </script>
 </body>
 </html>
