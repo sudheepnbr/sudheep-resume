@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sudheep P. | Infrastructure Portfolio v2.1</title>
+    <title>Sudheep Padmalayam | Infrastructure Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            /* Default Theme (Middle/Blue) */
             --bg: #ffffff; --card: #f8fafc; --accent: #2563eb; 
             --text-h: #0f172a; --text-p: #334155; --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.05);
@@ -44,7 +42,6 @@
             z-index: 10000; border-bottom: 2px solid var(--accent);
         }
         body.edit-mode .admin-top-bar { display: flex; }
-        .admin-controls { display: flex; gap: 15px; align-items: center; }
 
         .save-btn {
             background: var(--accent); border: none; color: white;
@@ -63,45 +60,46 @@
             background: var(--card); border: 1px solid var(--border); 
             border-radius: 30px; padding: 30px; position: relative;
             box-shadow: 0 10px 30px var(--shadow);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-            overflow: hidden; min-width: 250px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 280px;
         }
 
         body.edit-mode .box { resize: both; overflow: auto; border: 2px dashed var(--accent); }
-        .box:hover { transform: translateY(-8px); border-color: var(--accent); }
-        .box h2 { color: var(--text-h); margin-bottom: 15px; font-weight: 800; }
+        .box:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .box h2 { color: var(--text-h); margin-bottom: 15px; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+        .box h3 { color: var(--accent); font-size: 1rem; margin-top: 10px; }
+        .box ul { padding-left: 18px; margin-top: 10px; }
+        .box li { margin-bottom: 5px; font-size: 0.9rem; }
         
         .w-small { width: calc(33.33% - 17px); }
         .w-med { width: calc(50% - 13px); }
         .w-full { width: 100%; }
 
-        /* STAT BOX SPECIFIC (18+ BOX) */
-        .stat-content { display: flex; flex-direction: column; align-items: flex-start; }
+        /* STAT BOX */
+        .stat-content { display: flex; flex-direction: column; }
         .stat-number { font-size: 64px; font-weight: 800; color: var(--accent); line-height: 1; }
-        .stat-label { font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
+        .stat-label { font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* HERO & PROFILE */
-        .hero { display: flex; align-items: center; padding: 120px 10% 40px; gap: 50px; }
-        .profile-img-wrap { width: 180px; height: 180px; border-radius: 50px; border: 4px solid var(--accent); overflow: hidden; position: relative; }
-        .profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        
+        /* HERO */
+        .hero { display: flex; align-items: center; padding: 120px 10% 40px; gap: 40px; }
+        .profile-info h1 { font-size: 3.5rem; color: var(--text-h); font-weight: 800; line-height: 1.1; }
+        .profile-info p { font-size: 1.1rem; color: var(--accent); font-weight: 600; letter-spacing: 2px; margin-top: 10px; }
+        .contact-strip { margin-top: 15px; display: flex; gap: 20px; font-size: 0.9rem; font-weight: 600; }
+
         .del-box { position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; display: none; }
         body.edit-mode .del-box { display: block; }
 
-        /* TICKER */
         .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 15px 0; overflow: hidden; z-index: 100; }
-        .ticker { display: inline-block; animation: scroll 40s linear infinite; font-weight: 800; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+        .ticker { display: inline-block; animation: scroll 50s linear infinite; font-weight: 800; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        @media (max-width: 900px) { .hero { flex-direction: column; text-align: center; } .w-small, .w-med { width: 100%; } }
+        @media (max-width: 900px) { .hero { flex-direction: column; text-align: center; } .contact-strip { justify-content: center; flex-wrap: wrap; } .w-small, .w-med { width: 100%; } }
     </style>
 </head>
 <body data-theme="default">
 
     <div class="admin-top-bar">
-        <div class="admin-controls">
-            <button class="save-btn" style="background: #333;" onclick="addNewBox()">+ ADD NEW BOX</button>
-        </div>
+        <span style="font-weight: 800; letter-spacing: 1px;">ADMIN MODE ACTIVE</span>
         <button class="save-btn" onclick="exitAdmin()">SAVE & EXIT</button>
     </div>
 
@@ -112,12 +110,14 @@
     </div>
 
     <section class="hero">
-        <div class="profile-img-wrap">
-            <img id="profile-img" src="https://via.placeholder.com/180" alt="Profile">
-        </div>
-        <div>
-            <h1 id="user-name" style="font-size: 48px; color: var(--text-h); font-weight: 800;">SUDHEEP P.</h1>
-            <p id="job-title" style="font-size: 18px; color: var(--accent); font-weight: 600; letter-spacing: 3px;">IT INFRASTRUCTURE SPECIALIST</p>
+        <div class="profile-info">
+            <h1 id="user-name">SUDHEEP<br>PADMALAYAM</h1>
+            <p id="job-title">SENIOR IT INFRASTRUCTURE & ELV ADMINISTRATOR</p>
+            <div class="contact-strip">
+                <span id="loc">📍 Muscat, Oman</span>
+                <span id="phone">📞 +968 93566572</span>
+                <span id="email">✉ sudheepnbr@gmail.com</span>
+            </div>
         </div>
     </section>
 
@@ -126,26 +126,64 @@
             <button class="del-box" onclick="this.parentElement.remove()">×</button>
             <div class="stat-content">
                 <div class="stat-number">18+</div>
-                <div class="stat-label">Years of Mastery</div>
+                <div class="stat-label">Years Experience</div>
             </div>
         </div>
 
         <div class="box w-med">
             <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <h2>Core Expertise</h2>
-            <p>Windows Servers, Cisco Networking, Aruba Core Switching, FortiGate Firewalls, and Sangfor HCI Infrastructure.</p>
+            <h2>Professional Summary</h2>
+            <p>Expert in enterprise IT infrastructure, datacenter operations, networking, and security. Specialized in healthcare IT deployment, Windows Server, VMware, and ELV systems like CCTV/Access Control.</p>
         </div>
 
         <div class="box w-small">
             <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <h2>Current Focus</h2>
-            <p>Managing high-availability networks and disaster recovery for Oman International Hospital.</p>
+            <h2>Technical Core</h2>
+            <ul>
+                <li>Windows Server (AD, DNS, GPO)</li>
+                <li>VMware & Veeam Backup</li>
+                <li>FortiGate & Cisco Networking</li>
+                <li>SAN/NAS Storage Management</li>
+                <li>CCTV & Access Control</li>
+            </ul>
+        </div>
+
+        <div class="box w-full">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
+            <h2>Professional Experience</h2>
+            
+            <h3>Senior IT System Administrator | Oman International Hospital</h3>
+            <p><em>Feb 2021 – Present</em></p>
+            <ul>
+                <li>Built entire IT/ELV infrastructure from ground up.</li>
+                <li>Managed VMware environment and Veeam Backup operations.</li>
+                <li>Implemented FortiGate security policies and Cisco IP Telephony.</li>
+            </ul>
+
+            <h3 style="margin-top:20px;">Project Engineer | Majan Security & Telecom</h3>
+            <p><em>Jan 2015 – Feb 2021</em></p>
+            <ul>
+                <li>Commissioned IP/Analog CCTV and fiber optic networks.</li>
+                <li>Integrated enterprise NVR storage and PA systems.</li>
+            </ul>
+        </div>
+
+        <div class="box w-med">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
+            <h2>Certifications</h2>
+            <p>MCSA (Microsoft), CCNA (Cisco), Exacq Vision, Hikvision, Victor, Dahua.</p>
+        </div>
+
+        <div class="box w-small">
+            <button class="del-box" onclick="this.parentElement.remove()">×</button>
+            <h2>Education</h2>
+            <p>BA English (Calicut University)<br>Diploma in Computer Hardware & Network Engineering (DCNE)</p>
         </div>
     </main>
 
     <div class="ticker-wrap">
         <div class="ticker" id="ticker-text">
-            NETWORK SECURITY • VIRTUALIZATION • STORAGE AREA NETWORKS • CLOUD ARCHITECTURE • AUTOMATION • INCIDENT RESPONSE • 
+            DATACENTER OPS • VIRTUALIZATION • NETWORK SECURITY • ELV SYSTEMS • STORAGE ARCHITECTURE • DISASTER RECOVERY • 
         </div>
     </div>
 
@@ -153,21 +191,24 @@
         const trigger = document.getElementById('edit-trigger');
         let pressTimer;
 
-        // Enter Admin Mode (Hold middle blue button for 3 seconds)
+        // Long Press to activate Admin Mode (3 seconds)
         trigger.onmousedown = () => {
             pressTimer = setTimeout(() => {
                 document.body.classList.add('edit-mode');
-                // Enable editing on ALL text elements and sub-elements
-                const allElements = document.querySelectorAll('.box, .box *, #user-name, #job-title, .ticker');
-                allElements.forEach(el => {
+                // Make all elements inside boxes and main profile headers editable
+                const allEditable = document.querySelectorAll('.box, .box *, .profile-info *, .ticker');
+                allEditable.forEach(el => {
                     if(!el.classList.contains('del-box')) {
                         el.contentEditable = "true";
                     }
                 });
-                alert("Admin Mode: Active. You can now edit all boxes and text.");
+                alert("ADMIN MODE: Click any text to edit. Drag boxes or use 'Save & Exit' to lock changes.");
             }, 3000);
         };
+        
         trigger.onmouseup = () => clearTimeout(pressTimer);
+        trigger.ontouchstart = () => trigger.onmousedown(); // Mobile support
+        trigger.ontouchend = () => clearTimeout(pressTimer);
 
         function exitAdmin() {
             document.body.classList.remove('edit-mode');
@@ -183,18 +224,6 @@
                 document.body.setAttribute('data-theme', btn.dataset.theme);
             };
         });
-
-        function addNewBox() {
-            const dash = document.getElementById('main-dash');
-            const div = document.createElement('div');
-            div.className = "box w-med";
-            div.innerHTML = `
-                <button class="del-box" onclick="this.parentElement.remove()">×</button>
-                <h2 contenteditable="true">New Title</h2>
-                <p contenteditable="true">New content goes here...</p>
-            `;
-            dash.appendChild(div);
-        }
     </script>
 </body>
 </html>
