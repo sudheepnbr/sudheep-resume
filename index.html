@@ -44,7 +44,7 @@
         .hero-text h1 { font-size: 3.5rem; font-weight: 800; color: var(--text-h); line-height: 1; margin: 0; outline: none; }
         .hero-text p { color: var(--accent); font-weight: 600; letter-spacing: 2px; margin-top: 10px; outline: none; }
 
-        .dashboard { padding: 20px 8%; display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+        .dashboard { padding: 20px 8%; display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; min-height: 400px; }
         
         .box { 
             background: var(--card); border: 1px solid var(--border); 
@@ -52,21 +52,26 @@
             backdrop-filter: blur(10px); transition: border 0.3s;
             min-height: 80px; display: flex; flex-direction: column; outline: none;
             box-sizing: border-box;
+            /* Dynamic Resizing */
+            resize: none; overflow: hidden;
         }
 
-        body.edit-mode .box { border: 2px dashed var(--accent); }
-        .sortable-ghost { opacity: 0.3; background: var(--accent) !important; }
+        body.edit-mode .box { 
+            border: 2px dashed var(--accent); 
+            resize: both; 
+            overflow: auto; 
+        }
+
+        .sortable-ghost { opacity: 0.1; background: var(--accent) !important; }
         
         .w-small { width: calc(33.33% - 14px); }
         .w-med { width: calc(50% - 10px); }
         .w-full { width: 100%; }
 
-        .box-tools { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; z-index: 10; }
+        .box-tools { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; z-index: 10; background: var(--card); border-radius: 10px; padding: 2px; }
         body.edit-mode .box-tools { display: flex; }
         
-        /* Drag Handle specifically for moving */
-        .drag-handle { cursor: move; font-size: 14px; color: var(--accent); margin-right: 5px; display: none; }
-        body.edit-mode .drag-handle { display: inline-block; }
+        .drag-handle { cursor: move; font-size: 18px; color: var(--accent); padding: 0 5px; }
 
         .tool-btn { width: 24px; height: 24px; border-radius: 50%; border: none; cursor: pointer; font-size: 12px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
 
@@ -74,7 +79,7 @@
         .t-btn { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
         .t-btn.active { border-color: var(--accent); transform: scale(1.2); }
 
-        .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 12px; overflow: hidden; }
+        .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 12px; overflow: hidden; z-index: 999; }
         .ticker { display: inline-block; animation: scroll 40s linear infinite; font-weight: 800; color: var(--accent); white-space: nowrap; outline: none; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
@@ -84,7 +89,7 @@
 <body data-theme="default">
 
     <div class="admin-hud">
-        <span>ADMIN MODE: Hold ⠿ to Drag</span>
+        <span>ADMIN MODE: Move boxes via ⠿ handle</span>
         <button class="hud-btn" onclick="addBox('w-small')">+ Small Box</button>
         <button class="hud-btn" onclick="addBox('w-med')">+ Med Box</button>
         <button class="hud-btn" onclick="addBox('w-full')">+ Full Box</button>
@@ -132,18 +137,19 @@
             contact: '📍 Muscat, Oman | 📞 +968 93566572 | ✉ sudheepnbr@gmail.com',
             ticker: 'INFRASTRUCTURE • VIRTUALIZATION • NETWORKING • FIREWALLS • CCTV • ACCESS CONTROL • SAN/NAS • ',
             boxes: [
-                { size: 'w-small', html: '<div style="font-size:40px; font-weight:800; color:var(--accent)">18+</div><div>Years Experience</div>', weight: 'normal', fSize: '16px', align: 'center' },
-                { size: 'w-med', html: '<h2>Professional Summary</h2><p>Expert in Enterprise IT and Datacenters.</p>', weight: 'normal', fSize: '15px', align: 'left' }
+                { size: 'w-small', html: '<div style="font-size:40px; font-weight:800; color:var(--accent)">18+</div><div>Years Experience</div>', weight: 'normal', fSize: '16px', align: 'center', width: '', height: '' },
+                { size: 'w-med', html: '<h2>Professional Summary</h2><p>Expert in Enterprise IT and Datacenters.</p>', weight: 'normal', fSize: '15px', align: 'left', width: '', height: '' }
             ]
         };
 
         function initSortable() {
             if(sortable) sortable.destroy();
             sortable = new Sortable(dashboard, {
-                animation: 200,
-                handle: '.drag-handle', // Only drag by the handle
+                animation: 250,
+                handle: '.drag-handle',
                 ghostClass: 'sortable-ghost',
-                disabled: true // Disabled by default
+                forceFallback: true,
+                disabled: true
             });
         }
 
@@ -157,7 +163,7 @@
             if(saved.bg) document.documentElement.style.setProperty('--bg-img', `url('${saved.bg}')`);
 
             dashboard.innerHTML = '';
-            saved.boxes.forEach(b => createBox(b.size, b.html, b.weight, b.fSize, b.align));
+            saved.boxes.forEach(b => createBox(b.size, b.html, b.weight, b.fSize, b.align, b.width, b.height));
             initSortable();
         }
 
@@ -165,18 +171,21 @@
         trigger.onmousedown = () => {
             pressTimer = setTimeout(() => {
                 document.body.classList.add('edit-mode');
-                document.querySelectorAll('.box, .hero-text *, .ticker').forEach(el => el.contentEditable = "true");
-                sortable.option("disabled", false); // Enable dragging
-            }, 3000);
+                document.querySelectorAll('.inner-content, .hero-text *, .ticker').forEach(el => el.contentEditable = "true");
+                sortable.option("disabled", false);
+            }, 2000);
         };
         trigger.onmouseup = () => clearTimeout(pressTimer);
 
-        function createBox(size, html, weight = 'normal', fSize = '16px', align = 'left') {
+        function createBox(size, html, weight = 'normal', fSize = '16px', align = 'left', w = '', h = '') {
             const div = document.createElement('div');
             div.className = `box ${size}`;
             div.style.fontWeight = weight;
             div.style.fontSize = fSize;
             div.style.textAlign = align;
+            if(w) div.style.width = w;
+            if(h) div.style.height = h;
+
             div.innerHTML = `
                 <div class="box-tools" contenteditable="false">
                     <span class="drag-handle">⠿</span>
@@ -190,17 +199,15 @@
         function addBox(size) {
             createBox(size, '<h2>New Header</h2><p>New content...</p>');
             if(document.body.classList.contains('edit-mode')) {
-                document.querySelectorAll('.box').forEach(el => el.contentEditable = "true");
+                document.querySelectorAll('.inner-content').forEach(el => el.contentEditable = "true");
             }
         }
 
         function customizeBox(btn) {
             const box = btn.closest('.box');
-            const newSize = prompt("Font Size:", box.style.fontSize || '16px');
-            const isBold = confirm("Bold?");
+            const newSize = prompt("Font Size (px):", box.style.fontSize || '16px');
             const newAlign = prompt("Align (left, center, right):", box.style.textAlign || 'left');
             if(newSize) box.style.fontSize = newSize;
-            box.style.fontWeight = isBold ? '800' : '400';
             if(newAlign) box.style.textAlign = newAlign;
         }
 
@@ -234,7 +241,9 @@
                     html: box.querySelector('.inner-content').innerHTML,
                     weight: box.style.fontWeight,
                     fSize: box.style.fontSize,
-                    align: box.style.textAlign
+                    align: box.style.textAlign,
+                    width: box.style.width,
+                    height: box.style.height
                 });
             });
 
@@ -249,7 +258,6 @@
             a.href = URL.createObjectURL(blob);
             a.download = 'index.html';
             a.click();
-            alert("Saved and downloaded!");
         }
 
         loadPage();
