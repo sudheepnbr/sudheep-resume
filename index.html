@@ -3,104 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sudheep Padmalayam | Infrastructure Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Dynamic Infrastructure Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Roboto+Mono&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #ffffff; --card: #f8fafc; --accent: #2563eb; 
+            --bg: #ffffff; --card: rgba(248, 250, 252, 0.9); --accent: #2563eb; 
             --text-h: #0f172a; --text-p: #334155; --border: #e2e8f0;
-            --shadow: rgba(0, 0, 0, 0.05);
+            --shadow: rgba(0, 0, 0, 0.05); --bg-img: none;
         }
 
         [data-theme="dark"] { 
-            --bg: #020617; --card: #0f172a; --accent: #38bdf8; 
+            --bg: #020617; --card: rgba(15, 23, 42, 0.9); --accent: #38bdf8; 
             --text-h: #f8fafc; --text-p: #94a3b8; --border: #1e293b; 
-            --shadow: rgba(0, 0, 0, 0.5);
         }
 
-        [data-theme="lite"] { 
-            --bg: #fdfdfd; --card: #ffffff; --accent: #64748b; 
-            --text-h: #1e293b; --text-p: #475569; --border: #cbd5e1; 
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body { 
             background-color: var(--bg); 
-            color: var(--text-p); 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            line-height: 1.6; 
-            padding-bottom: 120px;
-            transition: all 0.4s ease;
+            background-image: var(--bg-img);
+            background-size: cover; background-attachment: fixed;
+            color: var(--text-p); font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.4s ease; padding-bottom: 120px;
         }
 
         /* ADMIN HUD */
-        .admin-top-bar {
+        .admin-hud {
             position: fixed; top: 0; left: 0; width: 100%;
-            background: #000; color: #fff; padding: 10px 5%;
-            display: none; justify-content: space-between; align-items: center;
+            background: #000; color: #fff; padding: 10px 20px;
+            display: none; flex-wrap: wrap; gap: 15px; align-items: center;
             z-index: 10000; border-bottom: 2px solid var(--accent);
         }
-        body.edit-mode .admin-top-bar { display: flex; }
+        body.edit-mode .admin-hud { display: flex; }
+        .hud-btn { background: #333; border: 1px solid #555; color: white; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .hud-btn:hover { background: var(--accent); }
 
-        .save-btn {
-            background: var(--accent); border: none; color: white;
-            padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 800;
-        }
-
-        /* THEME HUB */
-        .theme-hub { position: fixed; top: 80px; right: 30px; z-index: 1000; background: var(--card); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border); display: flex; gap: 15px; align-items: center; }
-        .t-btn { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-        .t-btn.active { border-color: var(--accent); transform: scale(1.3); }
-
-        /* DASHBOARD GRID */
-        .dashboard { padding: 40px 10%; display: flex; flex-wrap: wrap; gap: 25px; align-items: flex-start; }
+        /* DASHBOARD */
+        .dashboard { padding: 40px 8%; display: flex; flex-wrap: wrap; gap: 20px; }
         
         .box { 
             background: var(--card); border: 1px solid var(--border); 
-            border-radius: 30px; padding: 30px; position: relative;
-            box-shadow: 0 10px 30px var(--shadow);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            min-width: 280px;
+            border-radius: 24px; padding: 25px; position: relative;
+            backdrop-filter: blur(10px); transition: 0.3s;
+            min-height: 100px; display: flex; flex-direction: column;
         }
-
         body.edit-mode .box { resize: both; overflow: auto; border: 2px dashed var(--accent); }
-        .box:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .box h2 { color: var(--text-h); margin-bottom: 15px; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
-        .box h3 { color: var(--accent); font-size: 1rem; margin-top: 10px; }
-        .box ul { padding-left: 18px; margin-top: 10px; }
-        .box li { margin-bottom: 5px; font-size: 0.9rem; }
         
-        .w-small { width: calc(33.33% - 17px); }
-        .w-med { width: calc(50% - 13px); }
+        .w-small { width: calc(33.33% - 14px); }
+        .w-med { width: calc(50% - 10px); }
         .w-full { width: 100%; }
 
-        /* STAT BOX */
-        .stat-content { display: flex; flex-direction: column; }
-        .stat-number { font-size: 64px; font-weight: 800; color: var(--accent); line-height: 1; }
-        .stat-label { font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .box-tools { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; z-index: 10; }
+        body.edit-mode .box-tools { display: flex; }
+        .tool-btn { width: 24px; height: 24px; border-radius: 50%; border: none; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* HERO */
-        .hero { display: flex; align-items: center; padding: 120px 10% 40px; gap: 40px; }
-        .profile-info h1 { font-size: 3.5rem; color: var(--text-h); font-weight: 800; line-height: 1.1; }
-        .profile-info p { font-size: 1.1rem; color: var(--accent); font-weight: 600; letter-spacing: 2px; margin-top: 10px; }
-        .contact-strip { margin-top: 15px; display: flex; gap: 20px; font-size: 0.9rem; font-weight: 600; }
+        .hero { padding: 120px 8% 40px; }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; color: var(--text-h); line-height: 1; outline: none; }
 
-        .del-box { position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; display: none; }
-        body.edit-mode .del-box { display: block; }
+        .theme-hub { position: fixed; top: 80px; right: 30px; z-index: 1000; background: var(--card); padding: 10px; border-radius: 50px; border: 1px solid var(--border); display: flex; gap: 10px; }
+        .t-btn { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .t-btn.active { border-color: var(--accent); transform: scale(1.2); }
 
-        .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 15px 0; overflow: hidden; z-index: 100; }
-        .ticker { display: inline-block; animation: scroll 50s linear infinite; font-weight: 800; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+        .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 12px; overflow: hidden; }
+        .ticker { display: inline-block; animation: scroll 40s linear infinite; font-weight: 800; color: var(--accent); white-space: nowrap; outline: none; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-
-        @media (max-width: 900px) { .hero { flex-direction: column; text-align: center; } .contact-strip { justify-content: center; flex-wrap: wrap; } .w-small, .w-med { width: 100%; } }
     </style>
 </head>
 <body data-theme="default">
 
-    <div class="admin-top-bar">
-        <span style="font-weight: 800; letter-spacing: 1px;">ADMIN MODE ACTIVE</span>
-        <button class="save-btn" onclick="exitAdmin()">SAVE & EXIT</button>
+    <div class="admin-hud">
+        <span>ADMIN MODE</span>
+        <button class="hud-btn" onclick="addBox('w-small')">+ Small Box</button>
+        <button class="hud-btn" onclick="addBox('w-med')">+ Med Box</button>
+        <button class="hud-btn" onclick="addBox('w-full')">+ Full Box</button>
+        <button class="hud-btn" onclick="setPageBg()">Set Background Image</button>
+        <button class="hud-btn" onclick="resetData()" style="background:#ff4444">Reset All</button>
+        <button class="hud-btn" style="background:var(--accent); margin-left:auto;" onclick="saveAndExit()">SAVE & LOCK</button>
     </div>
 
     <div class="theme-hub">
@@ -109,114 +85,133 @@
         <div class="t-btn" data-theme="lite" style="background: #cbd5e1;"></div>
     </div>
 
-    <section class="hero">
-        <div class="profile-info">
-            <h1 id="user-name">SUDHEEP<br>PADMALAYAM</h1>
-            <p id="job-title">SENIOR IT INFRASTRUCTURE & ELV ADMINISTRATOR</p>
-            <div class="contact-strip">
-                <span id="loc">📍 Muscat, Oman</span>
-                <span id="phone">📞 +968 93566572</span>
-                <span id="email">✉ sudheepnbr@gmail.com</span>
-            </div>
-        </div>
-    </section>
+    <header class="hero" id="hero-area">
+        </header>
 
-    <main class="dashboard" id="main-dash">
-        <div class="box w-small">
-            <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <div class="stat-content">
-                <div class="stat-number">18+</div>
-                <div class="stat-label">Years Experience</div>
-            </div>
-        </div>
-
-        <div class="box w-med">
-            <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <h2>Professional Summary</h2>
-            <p>Expert in enterprise IT infrastructure, datacenter operations, networking, and security. Specialized in healthcare IT deployment, Windows Server, VMware, and ELV systems like CCTV/Access Control.</p>
-        </div>
-
-        <div class="box w-small">
-            <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <h2>Technical Core</h2>
-            <ul>
-                <li>Windows Server (AD, DNS, GPO)</li>
-                <li>VMware & Veeam Backup</li>
-                <li>FortiGate & Cisco Networking</li>
-                <li>SAN/NAS Storage Management</li>
-                <li>CCTV & Access Control</li>
-            </ul>
-        </div>
-
-        <div class="box w-full">
-            <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <h2>Professional Experience</h2>
-            
-            <h3>Senior IT System Administrator | Oman International Hospital</h3>
-            <p><em>Feb 2021 – Present</em></p>
-            <ul>
-                <li>Built entire IT/ELV infrastructure from ground up.</li>
-                <li>Managed VMware environment and Veeam Backup operations.</li>
-                <li>Implemented FortiGate security policies and Cisco IP Telephony.</li>
-            </ul>
-
-            <h3 style="margin-top:20px;">Project Engineer | Majan Security & Telecom</h3>
-            <p><em>Jan 2015 – Feb 2021</em></p>
-            <ul>
-                <li>Commissioned IP/Analog CCTV and fiber optic networks.</li>
-                <li>Integrated enterprise NVR storage and PA systems.</li>
-            </ul>
-        </div>
-
-        <div class="box w-med">
-            <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <h2>Certifications</h2>
-            <p>MCSA (Microsoft), CCNA (Cisco), Exacq Vision, Hikvision, Victor, Dahua.</p>
-        </div>
-
-        <div class="box w-small">
-            <button class="del-box" onclick="this.parentElement.remove()">×</button>
-            <h2>Education</h2>
-            <p>BA English (Calicut University)<br>Diploma in Computer Hardware & Network Engineering (DCNE)</p>
-        </div>
-    </main>
+    <main class="dashboard" id="dashboard">
+        </main>
 
     <div class="ticker-wrap">
-        <div class="ticker" id="ticker-text">
-            DATACENTER OPS • VIRTUALIZATION • NETWORK SECURITY • ELV SYSTEMS • STORAGE ARCHITECTURE • DISASTER RECOVERY • 
-        </div>
+        <div class="ticker" id="ticker-content">SKILLS • EXPERIENCE • CERTIFICATIONS • PROJECTS • </div>
     </div>
 
     <script>
+        const dashboard = document.getElementById('dashboard');
+        const heroArea = document.getElementById('hero-area');
         const trigger = document.getElementById('edit-trigger');
         let pressTimer;
 
-        // Long Press to activate Admin Mode (3 seconds)
+        // 1. Initial Default Data (If nothing is in LocalStorage)
+        const defaultData = {
+            bg: '',
+            hero: `<h1 id="user-name">NAME HERE</h1><p id="user-role">JOB TITLE HERE</p>`,
+            boxes: [
+                { size: 'w-small', html: '<div class="stat-num">18+</div><div>Years Experience</div>', font: 'inherit', align: 'left' },
+                { size: 'w-med', html: '<h2>Summary</h2><p>Your text here...</p>', font: 'inherit', align: 'left' }
+            ]
+        };
+
+        // 2. Load Data from Storage
+        function loadPage() {
+            const saved = JSON.parse(localStorage.getItem('myDynamicDashboard')) || defaultData;
+            
+            // Set Background
+            if(saved.bg) document.documentElement.style.setProperty('--bg-img', `url('${saved.bg}')`);
+
+            // Set Hero
+            heroArea.innerHTML = saved.hero;
+
+            // Set Boxes
+            dashboard.innerHTML = '';
+            saved.boxes.forEach(boxData => {
+                createBox(boxData.size, boxData.html, boxData.font, boxData.align);
+            });
+        }
+
+        // 3. Admin Activation (Long Press)
         trigger.onmousedown = () => {
             pressTimer = setTimeout(() => {
                 document.body.classList.add('edit-mode');
-                // Make all elements inside boxes and main profile headers editable
-                const allEditable = document.querySelectorAll('.box, .box *, .profile-info *, .ticker');
-                allEditable.forEach(el => {
-                    if(!el.classList.contains('del-box')) {
-                        el.contentEditable = "true";
-                    }
-                });
-                alert("ADMIN MODE: Click any text to edit. Drag boxes or use 'Save & Exit' to lock changes.");
+                document.querySelectorAll('.box, h1, p, .ticker').forEach(el => el.contentEditable = "true");
+                alert("ADMIN MODE: Edit any text, drag box corners to resize, or use the top menu to add content.");
             }, 3000);
         };
-        
         trigger.onmouseup = () => clearTimeout(pressTimer);
-        trigger.ontouchstart = () => trigger.onmousedown(); // Mobile support
-        trigger.ontouchend = () => clearTimeout(pressTimer);
 
-        function exitAdmin() {
-            document.body.classList.remove('edit-mode');
-            const allElements = document.querySelectorAll('[contenteditable="true"]');
-            allElements.forEach(el => el.contentEditable = "false");
+        // 4. Box Creation
+        function createBox(size, html, font = 'inherit', align = 'left') {
+            const div = document.createElement('div');
+            div.className = `box ${size}`;
+            div.style.fontFamily = font;
+            div.style.textAlign = align;
+            div.innerHTML = `
+                <div class="box-tools" contenteditable="false">
+                    <button class="tool-btn" onclick="customizeBox(this)">⚙️</button>
+                    <button class="tool-btn" style="background:#ff4444;color:white" onclick="this.closest('.box').remove()">×</button>
+                </div>
+                <div class="inner-content">${html}</div>
+            `;
+            dashboard.appendChild(div);
         }
 
-        // Theme Switching
+        function addBox(size) {
+            createBox(size, '<h2>New Section</h2><p>Edit this content...</p>');
+            document.querySelectorAll('.box').forEach(el => el.contentEditable = "true");
+        }
+
+        // 5. Customization Tools
+        function customizeBox(btn) {
+            const box = btn.closest('.box');
+            const size = prompt("Font Size (px):", "16px");
+            const font = prompt("Font (sans-serif, serif, Roboto Mono):", "sans-serif");
+            const align = prompt("Align (left, center, right):", "left");
+            if(size) box.style.fontSize = size;
+            if(font) box.style.fontFamily = font;
+            if(align) box.style.textAlign = align;
+        }
+
+        function setPageBg() {
+            const url = prompt("Enter Image URL:");
+            if(url) {
+                document.documentElement.style.setProperty('--bg-img', `url('${url}')`);
+                document.documentElement.style.setProperty('--bg', `transparent`);
+            }
+        }
+
+        // 6. Save Data
+        function saveAndExit() {
+            const dataToSave = {
+                bg: getComputedStyle(document.documentElement).getPropertyValue('--bg-img').replace(/url\(['"]?(.*?)['"]?\)/i, '$1'),
+                hero: heroArea.innerHTML,
+                boxes: []
+            };
+
+            document.querySelectorAll('.box').forEach(box => {
+                dataToSave.boxes.push({
+                    size: Array.from(box.classList).find(c => c.startsWith('w-')),
+                    html: box.querySelector('.inner-content').innerHTML,
+                    font: box.style.fontFamily,
+                    align: box.style.textAlign
+                });
+            });
+
+            localStorage.setItem('myDynamicDashboard', JSON.stringify(dataToSave));
+            document.body.classList.remove('edit-mode');
+            document.querySelectorAll('[contenteditable]').forEach(el => el.contentEditable = "false");
+            alert("Changes saved to local storage!");
+        }
+
+        function resetData() {
+            if(confirm("Clear all data?")) {
+                localStorage.removeItem('myDynamicDashboard');
+                location.reload();
+            }
+        }
+
+        // Initialize
+        loadPage();
+
+        // Theme Switch
         document.querySelectorAll('.t-btn').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
