@@ -83,7 +83,7 @@
         <button class="hud-btn" onclick="addBox('w-med')">+ Med Box</button>
         <button class="hud-btn" onclick="addBox('w-full')">+ Full Box</button>
         <button class="hud-btn" onclick="setPageBg()">Set Background</button>
-        <button class="hud-btn" style="background:var(--accent); margin-left:auto;" onclick="saveAndExit()">SAVE & LOCK</button>
+        <button class="hud-btn" style="background:var(--accent); margin-left:auto;" onclick="saveAndExit()">SAVE & DOWNLOAD</button>
     </div>
 
     <div class="theme-hub">
@@ -127,9 +127,7 @@
             ticker: 'INFRASTRUCTURE • VIRTUALIZATION • NETWORKING • FIREWALLS • CCTV • ACCESS CONTROL • SAN/NAS • ',
             boxes: [
                 { size: 'w-small', html: '<div style="font-size:40px; font-weight:800; color:var(--accent)">18+</div><div>Years Experience</div>', weight: 'normal', fSize: '16px', align: 'center' },
-                { size: 'w-med', html: '<h2>Professional Summary</h2><p>Senior IT Infrastructure and ELV Systems Administrator with 18+ years of experience in enterprise IT infrastructure and datacenter operations.</p>', weight: 'normal', fSize: '15px', align: 'left' },
-                { size: 'w-small', html: '<h2>Key Skills</h2><ul><li>Windows Server</li><li>VMware</li><li>FortiGate</li><li>CCTV & ELV</li></ul>', weight: 'normal', fSize: '14px', align: 'left' },
-                { size: 'w-full', html: '<h2>Experience</h2><b>Oman International Hospital</b><br>Senior IT System Administrator (2021-Present)', weight: 'normal', fSize: '16px', align: 'left' }
+                { size: 'w-med', html: '<h2>Summary</h2><p>IT Infrastructure expert with focus on Healthcare systems.</p>', weight: 'normal', fSize: '15px', align: 'left' }
             ]
         };
 
@@ -141,7 +139,6 @@
             document.getElementById('user-contact').innerText = saved.contact;
             document.getElementById('ticker-content').innerText = saved.ticker;
             if(saved.bg) document.documentElement.style.setProperty('--bg-img', `url('${saved.bg}')`);
-
             dashboard.innerHTML = '';
             saved.boxes.forEach(b => createBox(b.size, b.html, b.weight, b.fSize, b.align));
         }
@@ -162,24 +159,23 @@
             div.style.textAlign = align;
             div.innerHTML = `
                 <div class="box-tools" contenteditable="false">
-                    <button class="tool-btn" onclick="customizeBox(this)" title="Settings">⚙️</button>
-                    <button class="tool-btn" style="background:#ff4444;color:white" onclick="this.closest('.box').remove()" title="Delete">×</button>
+                    <button class="tool-btn" onclick="customizeBox(this)">⚙️</button>
+                    <button class="tool-btn" style="background:#ff4444;color:white" onclick="this.closest('.box').remove()">×</button>
                 </div>
                 <div class="inner-content">${html}</div>`;
             dashboard.appendChild(div);
         }
 
         function addBox(size) {
-            createBox(size, '<h2>New Header</h2><p>New content...</p>');
+            createBox(size, '<h2>New Item</h2><p>Content goes here...</p>');
             document.querySelectorAll('.box').forEach(el => el.contentEditable = "true");
         }
 
         function customizeBox(btn) {
             const box = btn.closest('.box');
-            const newSize = prompt("Enter Font Size (e.g. 14px, 20px):", box.style.fontSize || '16px');
-            const isBold = confirm("Make text BOLD?");
-            const newAlign = prompt("Text Alignment (left, center, right):", box.style.textAlign || 'left');
-            
+            const newSize = prompt("Font Size:", box.style.fontSize || '16px');
+            const isBold = confirm("Bold text?");
+            const newAlign = prompt("Align (left, center, right):", box.style.textAlign || 'left');
             if(newSize) box.style.fontSize = newSize;
             box.style.fontWeight = isBold ? '800' : '400';
             if(newAlign) box.style.textAlign = newAlign;
@@ -194,11 +190,12 @@
         }
 
         function setPageBg() {
-            const url = prompt("Enter Image URL for Background:");
+            const url = prompt("Background Image URL:");
             if(url) document.documentElement.style.setProperty('--bg-img', `url('${url}')`);
         }
 
         function saveAndExit() {
+            // 1. Prepare Data for LocalStorage
             const dataToSave = {
                 photo: document.getElementById('user-photo').src,
                 bg: getComputedStyle(document.documentElement).getPropertyValue('--bg-img').replace(/url\(['"]?(.*?)['"]?\)/i, '$1'),
@@ -220,9 +217,22 @@
             });
 
             localStorage.setItem('sudheep_portfolio_v2', JSON.stringify(dataToSave));
+
+            // 2. Clean UI for Download
             document.body.classList.remove('edit-mode');
             document.querySelectorAll('[contenteditable]').forEach(el => el.contentEditable = "false");
-            alert("Portfolio Saved!");
+
+            // 3. Trigger HTML File Download
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'index.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            alert("Portfolio Saved and index.html downloaded!");
         }
 
         loadPage();
