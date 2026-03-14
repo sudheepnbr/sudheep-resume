@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudheep Padmalayam | IT Infrastructure Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
             --bg: #ffffff; --card: rgba(248, 250, 252, 0.9); --accent: #2563eb; 
@@ -45,16 +46,29 @@
         .hero-text h1 { font-size: 3.5rem; font-weight: 800; color: var(--text-h); line-height: 1; margin: 0; outline: none; }
         .hero-text p { color: var(--accent); font-weight: 600; letter-spacing: 2px; margin-top: 10px; outline: none; }
 
-        /* DASHBOARD */
-        .dashboard { padding: 20px 8%; display: flex; flex-wrap: wrap; gap: 20px; }
+        /* DASHBOARD (GRID) */
+        .dashboard { 
+            padding: 20px 8%; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            align-items: flex-start;
+        }
+        
         .box { 
             background: var(--card); border: 1px solid var(--border); 
             border-radius: 24px; padding: 25px; position: relative;
-            backdrop-filter: blur(10px); transition: border 0.3s;
+            backdrop-filter: blur(10px); transition: border 0.3s, transform 0.2s;
             min-height: 80px; display: flex; flex-direction: column; outline: none;
+            box-sizing: border-box;
         }
-        body.edit-mode .box { resize: both; overflow: auto; border: 2px dashed var(--accent); }
+
+        /* Dragging Styles */
+        body.edit-mode .box { border: 2px dashed var(--accent); cursor: grab; }
+        body.edit-mode .box:active { cursor: grabbing; }
+        .sortable-ghost { opacity: 0.4; transform: scale(0.95); }
         
+        /* Dynamic Sizes */
         .w-small { width: calc(33.33% - 14px); }
         .w-med { width: calc(50% - 10px); }
         .w-full { width: 100%; }
@@ -72,13 +86,14 @@
         .ticker { display: inline-block; animation: scroll 40s linear infinite; font-weight: 800; color: var(--accent); white-space: nowrap; outline: none; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        @media (max-width: 800px) { .hero { flex-direction: column; text-align: center; } .w-small, .w-med { width: 100%; } }
+        @media (max-width: 1024px) { .w-small { width: calc(50% - 10px); } }
+        @media (max-width: 768px) { .hero { flex-direction: column; text-align: center; } .w-small, .w-med { width: 100%; } }
     </style>
 </head>
 <body data-theme="default">
 
     <div class="admin-hud">
-        <span>ADMIN MODE</span>
+        <span>ADMIN MODE (Drag to move boxes)</span>
         <button class="hud-btn" onclick="addBox('w-small')">+ Small Box</button>
         <button class="hud-btn" onclick="addBox('w-med')">+ Med Box</button>
         <button class="hud-btn" onclick="addBox('w-full')">+ Full Box</button>
@@ -117,6 +132,7 @@
         const dashboard = document.getElementById('dashboard');
         const trigger = document.getElementById('edit-trigger');
         let pressTimer;
+        let sortableInstance;
 
         const defaultData = {
             photo: 'https://via.placeholder.com/180',
@@ -127,9 +143,19 @@
             ticker: 'INFRASTRUCTURE • VIRTUALIZATION • NETWORKING • FIREWALLS • CCTV • ACCESS CONTROL • SAN/NAS • ',
             boxes: [
                 { size: 'w-small', html: '<div style="font-size:40px; font-weight:800; color:var(--accent)">18+</div><div>Years Experience</div>', weight: 'normal', fSize: '16px', align: 'center' },
-                { size: 'w-med', html: '<h2>Summary</h2><p>IT Infrastructure expert with focus on Healthcare systems.</p>', weight: 'normal', fSize: '15px', align: 'left' }
+                { size: 'w-med', html: '<h2>Professional Summary</h2><p>Senior IT Infrastructure specialist with 18+ years experience.</p>', weight: 'normal', fSize: '15px', align: 'left' },
+                { size: 'w-small', html: '<h2>Core Stack</h2><ul><li>VMware ESXi</li><li>Fortinet</li><li>HPE Synergy</li></ul>', weight: 'normal', fSize: '14px', align: 'left' }
             ]
         };
+
+        function initSortable() {
+            sortableInstance = new Sortable(dashboard, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                disabled: true, // Disabled by default until Edit Mode
+                onEnd: function() { console.log("Order updated"); }
+            });
+        }
 
         function loadPage() {
             const saved = JSON.parse(localStorage.getItem('sudheep_portfolio_v2')) || defaultData;
@@ -139,14 +165,17 @@
             document.getElementById('user-contact').innerText = saved.contact;
             document.getElementById('ticker-content').innerText = saved.ticker;
             if(saved.bg) document.documentElement.style.setProperty('--bg-img', `url('${saved.bg}')`);
+            
             dashboard.innerHTML = '';
             saved.boxes.forEach(b => createBox(b.size, b.html, b.weight, b.fSize, b.align));
+            initSortable();
         }
 
         trigger.onmousedown = () => {
             pressTimer = setTimeout(() => {
                 document.body.classList.add('edit-mode');
                 document.querySelectorAll('.box, .hero-text *, .ticker').forEach(el => el.contentEditable = "true");
+                sortableInstance.option("disabled", false); // Enable Dragging
             }, 3000);
         };
         trigger.onmouseup = () => clearTimeout(pressTimer);
@@ -167,15 +196,18 @@
         }
 
         function addBox(size) {
-            createBox(size, '<h2>New Item</h2><p>Content goes here...</p>');
-            document.querySelectorAll('.box').forEach(el => el.contentEditable = "true");
+            createBox(size, '<h2>New Header</h2><p>Edit this content...</p>');
+            if(document.body.classList.contains('edit-mode')) {
+                document.querySelectorAll('.box').forEach(el => el.contentEditable = "true");
+            }
         }
 
         function customizeBox(btn) {
             const box = btn.closest('.box');
-            const newSize = prompt("Font Size:", box.style.fontSize || '16px');
-            const isBold = confirm("Bold text?");
-            const newAlign = prompt("Align (left, center, right):", box.style.textAlign || 'left');
+            const newSize = prompt("Enter Font Size (e.g. 14px):", box.style.fontSize || '16px');
+            const isBold = confirm("Make text BOLD?");
+            const newAlign = prompt("Text Alignment (left, center, right):", box.style.textAlign || 'left');
+            
             if(newSize) box.style.fontSize = newSize;
             box.style.fontWeight = isBold ? '800' : '400';
             if(newAlign) box.style.textAlign = newAlign;
@@ -190,12 +222,11 @@
         }
 
         function setPageBg() {
-            const url = prompt("Background Image URL:");
+            const url = prompt("Enter Image URL for Background:");
             if(url) document.documentElement.style.setProperty('--bg-img', `url('${url}')`);
         }
 
         function saveAndExit() {
-            // 1. Prepare Data for LocalStorage
             const dataToSave = {
                 photo: document.getElementById('user-photo').src,
                 bg: getComputedStyle(document.documentElement).getPropertyValue('--bg-img').replace(/url\(['"]?(.*?)['"]?\)/i, '$1'),
@@ -206,6 +237,7 @@
                 boxes: []
             };
 
+            // This captures the boxes in their current visual order
             document.querySelectorAll('.box').forEach(box => {
                 dataToSave.boxes.push({
                     size: Array.from(box.classList).find(c => c.startsWith('w-')),
@@ -217,12 +249,12 @@
             });
 
             localStorage.setItem('sudheep_portfolio_v2', JSON.stringify(dataToSave));
-
-            // 2. Clean UI for Download
+            
             document.body.classList.remove('edit-mode');
             document.querySelectorAll('[contenteditable]').forEach(el => el.contentEditable = "false");
+            sortableInstance.option("disabled", true);
 
-            // 3. Trigger HTML File Download
+            // Trigger Download
             const htmlContent = document.documentElement.outerHTML;
             const blob = new Blob([htmlContent], { type: 'text/html' });
             const a = document.createElement('a');
@@ -232,7 +264,7 @@
             a.click();
             document.body.removeChild(a);
 
-            alert("Portfolio Saved and index.html downloaded!");
+            alert("Portfolio order saved and index.html downloaded!");
         }
 
         loadPage();
