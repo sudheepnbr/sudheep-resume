@@ -1,531 +1,217 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastructure Architect | Next-Gen Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CORE THEME ENGINE --- */
+        :root {
+            --bg: #050508;
+            --card: rgba(255, 255, 255, 0.03);
+            --accent: #8b5cf6; /* Finora Purple */
+            --accent-glow: rgba(139, 92, 246, 0.3);
+            --text-h: #ffffff;
+            --text-p: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+        }
 
-<meta charset="UTF-8">
-<title>Sudheep Padmalayam | Resume</title>
+        [data-theme="corporate"] {
+            --bg: #f8fafc; --card: #ffffff; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1);
+            --text-h: #0f172a; --text-p: #475569; --border: #e2e8f0;
+        }
 
-<style>
+        [data-theme="infra"] {
+            --bg: #0f172a; --card: #1e293b; --accent: #0ea5e9; --accent-glow: rgba(14, 165, 233, 0.2);
+            --text-h: #f1f5f9; --text-p: #94a3b8; --border: #334155;
+        }
 
-body{
-font-family:Arial;
-margin:0;
-background:#0f172a;
-color:white;
-text-align:center;
-}
+        [data-theme="gold"] {
+            --bg: #0a0a05; --card: #14140f; --accent: #d4af37; --accent-glow: rgba(212, 175, 55, 0.2);
+            --text-h: #ffffff; --text-p: #a1a196; --border: #2a2a20;
+        }
 
-header{
-padding:40px;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.4s ease; }
 
-#profilePhoto{
-width:150px;
-border-radius:50%;
-border:4px solid gold;
-cursor:pointer;
-}
+        body {
+            background-color: var(--bg);
+            color: var(--text-p);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-section{
-max-width:1000px;
-margin:auto;
-padding:20px;
-}
+        /* --- THEME SELECTOR (Finora Style) --- */
+        .theme-hub {
+            position: fixed; top: 30px; right: 30px; z-index: 1000;
+            background: var(--card); backdrop-filter: blur(15px);
+            padding: 8px 15px; border-radius: 50px; border: 1px solid var(--border);
+            display: flex; gap: 12px; align-items: center;
+        }
 
-.skill{
-background:#1e293b;
-padding:10px 16px;
-margin:5px;
-display:inline-block;
-border-radius:20px;
-}
+        .t-btn { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .t-btn.active { border-color: #fff; transform: scale(1.2); }
 
-.project{
-background:#1e293b;
-padding:20px;
-margin:10px;
-border-radius:10px;
-}
+        /* --- BACKGROUND GLOWS --- */
+        .glow {
+            position: fixed; width: 40vw; height: 40vw; border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            z-index: -1; filter: blur(100px); pointer-events: none;
+        }
 
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.8);
-}
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 90vh; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 10%; gap: 50px;
+        }
 
-.modal-content{
-background:white;
-color:black;
-width:650px;
-margin:60px auto;
-padding:20px;
-border-radius:10px;
-text-align:left;
-}
+        .hero-content { flex: 1; }
+        .hero-visual { flex: 1; display: flex; justify-content: center; position: relative; }
 
-.card{
-background:white;
-color:black;
-padding:20px;
-width:300px;
-border-radius:10px;
-margin-top:10px;
-}
+        .tag-new {
+            background: var(--card); border: 1px solid var(--border);
+            padding: 5px 15px; border-radius: 20px; font-size: 0.75rem;
+            color: var(--accent); margin-bottom: 20px; display: inline-block;
+        }
 
-button{
-padding:6px 12px;
-margin:5px;
-}
+        h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; color: var(--text-h); line-height: 1.1; margin-bottom: 25px; }
 
-input{
-width:95%;
-padding:6px;
-margin-bottom:8px;
-}
+        /* --- CTA BUTTON --- */
+        .btn-main {
+            background: var(--accent); color: white; border: none;
+            padding: 15px 35px; border-radius: 12px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 10px 20px var(--accent-glow);
+            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+        }
 
-</style>
+        /* --- BENTO DASHBOARD (For 5-Page Content) --- */
+        .dashboard {
+            padding: 80px 10%; display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px;
+        }
 
+        .box {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 30px; padding: 40px; backdrop-filter: blur(20px);
+            position: relative; overflow: hidden;
+        }
+
+        .box:hover { border-color: var(--accent); transform: translateY(-5px); }
+
+        .span-7 { grid-column: span 7; }
+        .span-5 { grid-column: span 5; }
+        .span-12 { grid-column: span 12; }
+
+        .icon-box {
+            width: 50px; height: 50px; background: var(--accent-glow);
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; margin-bottom: 20px; color: var(--accent);
+        }
+
+        /* --- FOOTER LOGOS --- */
+        .partners {
+            padding: 50px 10%; display: flex; justify-content: space-between;
+            opacity: 0.5; filter: grayscale(1);
+        }
+
+        @media (max-width: 1000px) {
+            .hero { flex-direction: column; text-align: center; padding-top: 100px; }
+            .dashboard { display: flex; flex-direction: column; }
+        }
+    </style>
 </head>
-
-<body>
-
-<header>
-
-<img id="profilePhoto">
-
-<h1 id="name"></h1>
-<h3 id="title"></h3>
-
-</header>
-
-<section>
-
-<h2>Skills</h2>
-<div id="skills"></div>
-
-<h2>Projects</h2>
-<div id="projects"></div>
-
-<h2>ELV Systems</h2>
-<div id="elv"></div>
-
-</section>
-
-
-<!-- ADMIN PANEL -->
-
-<div id="adminModal" class="modal">
-
-<div class="modal-content">
-
-<h2>Resume Admin Panel</h2>
-
-<label>Name</label>
-<input id="nameInput">
-
-<label>Title</label>
-<input id="titleInput">
-
-<label>Theme Color</label>
-<input type="color" id="themeInput">
-
-<label>Upload Profile Photo</label>
-<input type="file" id="photoUpload">
-
-<hr>
-
-<h3>Skills</h3>
-
-<input id="skillInput">
-<button onclick="addSkill()">Add</button>
-
-<ul id="skillList"></ul>
-
-<hr>
-
-<h3>Projects</h3>
-
-<input id="projectTitle" placeholder="Title">
-<input id="projectDesc" placeholder="Description">
-
-<button onclick="addProject()">Add</button>
-
-<ul id="projectList"></ul>
-
-<hr>
-
-<h3>ELV Systems</h3>
-
-<input id="elvInput">
-<button onclick="addELV()">Add</button>
-
-<ul id="elvList"></ul>
-
-<hr>
-
-<h3>Business Card</h3>
-
-<input type="file" id="logoUpload">
-
-<div id="cardPreview" class="card">
-
-<img id="cardLogo" width="60">
-
-<h3 id="cardName"></h3>
-<p id="cardTitle"></p>
-
-</div>
-
-<button onclick="downloadCard()">Download Card</button>
-
-<hr>
-
-<button onclick="saveData()">Save</button>
-<button onclick="exportData()">Export JSON</button>
-<input type="file" id="importJSON">
-<button onclick="importData()">Import JSON</button>
-
-<button onclick="closeAdmin()">Close</button>
-
-</div>
-
-</div>
-
-
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-<script>
-
-let data = JSON.parse(localStorage.getItem("resumeData")) || {
-
-name:"Sudheep Padmalayam",
-title:"Senior IT Infrastructure Administrator",
-theme:"#0f172a",
-photo:"",
-
-skills:[
-"VMware vSphere",
-"Microsoft 365",
-"FortiGate Firewall"
-],
-
-projects:[
-{
-title:"OIH Switch Health Platform",
-desc:"Flask monitoring system"
-}
-],
-
-elv:[
-"Enterprise CCTV",
-"Access Control Systems",
-"Master Clock System"
-]
-
-}
-
-
-// RENDER PAGE
-
-function render(){
-
-document.getElementById("name").innerText=data.name
-document.getElementById("title").innerText=data.title
-
-document.body.style.background=data.theme
-
-if(data.photo){
-document.getElementById("profilePhoto").src=data.photo
-}else{
-document.getElementById("profilePhoto").src="https://via.placeholder.com/150"
-}
-
-
-// skills
-
-let skillHTML=""
-
-data.skills.forEach(s=>{
-skillHTML+=`<span class="skill">${s}</span>`
-})
-
-document.getElementById("skills").innerHTML=skillHTML
-
-
-// projects
-
-let projectHTML=""
-
-data.projects.forEach(p=>{
-
-projectHTML+=`
-<div class="project">
-<h4>${p.title}</h4>
-<p>${p.desc}</p>
-</div>
-`
-
-})
-
-document.getElementById("projects").innerHTML=projectHTML
-
-
-// ELV
-
-let elvHTML=""
-
-data.elv.forEach(e=>{
-elvHTML+=`<span class="skill">${e}</span>`
-})
-
-document.getElementById("elv").innerHTML=elvHTML
-
-
-// business card
-
-document.getElementById("cardName").innerText=data.name
-document.getElementById("cardTitle").innerText=data.title
-
-}
-
-render()
-
-
-// PROFILE CLICK
-
-document.getElementById("profilePhoto").onclick=function(){
-
-document.getElementById("adminModal").style.display="block"
-
-document.getElementById("nameInput").value=data.name
-document.getElementById("titleInput").value=data.title
-document.getElementById("themeInput").value=data.theme
-
-loadLists()
-
-}
-
-
-// CLOSE ADMIN
-
-function closeAdmin(){
-document.getElementById("adminModal").style.display="none"
-}
-
-
-// LOAD LISTS
-
-function loadLists(){
-
-let html=""
-
-data.skills.forEach((s,i)=>{
-html+=`<li>${s} <button onclick="deleteSkill(${i})">X</button></li>`
-})
-
-document.getElementById("skillList").innerHTML=html
-
-
-html=""
-
-data.projects.forEach((p,i)=>{
-html+=`<li>${p.title} <button onclick="deleteProject(${i})">X</button></li>`
-})
-
-document.getElementById("projectList").innerHTML=html
-
-
-html=""
-
-data.elv.forEach((e,i)=>{
-html+=`<li>${e} <button onclick="deleteELV(${i})">X</button></li>`
-})
-
-document.getElementById("elvList").innerHTML=html
-
-}
-
-
-// CRUD SKILLS
-
-function addSkill(){
-
-let val=document.getElementById("skillInput").value
-
-data.skills.push(val)
-
-loadLists()
-
-}
-
-function deleteSkill(i){
-
-data.skills.splice(i,1)
-
-loadLists()
-
-}
-
-
-// CRUD PROJECTS
-
-function addProject(){
-
-let title=document.getElementById("projectTitle").value
-let desc=document.getElementById("projectDesc").value
-
-data.projects.push({title,desc})
-
-loadLists()
-
-}
-
-function deleteProject(i){
-
-data.projects.splice(i,1)
-
-loadLists()
-
-}
-
-
-// CRUD ELV
-
-function addELV(){
-
-let val=document.getElementById("elvInput").value
-
-data.elv.push(val)
-
-loadLists()
-
-}
-
-function deleteELV(i){
-
-data.elv.splice(i,1)
-
-loadLists()
-
-}
-
-
-// PHOTO UPLOAD
-
-document.getElementById("photoUpload").addEventListener("change",function(){
-
-let reader=new FileReader()
-
-reader.onload=function(e){
-
-data.photo=e.target.result
-
-render()
-
-}
-
-reader.readAsDataURL(this.files[0])
-
-})
-
-
-// LOGO UPLOAD
-
-document.getElementById("logoUpload").addEventListener("change",function(){
-
-let reader=new FileReader()
-
-reader.onload=function(e){
-
-document.getElementById("cardLogo").src=e.target.result
-
-}
-
-reader.readAsDataURL(this.files[0])
-
-})
-
-
-// SAVE
-
-function saveData(){
-
-data.name=document.getElementById("nameInput").value
-data.title=document.getElementById("titleInput").value
-data.theme=document.getElementById("themeInput").value
-
-localStorage.setItem("resumeData",JSON.stringify(data))
-
-render()
-
-closeAdmin()
-
-}
-
-
-// EXPORT JSON
-
-function exportData(){
-
-let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"})
-
-let a=document.createElement("a")
-
-a.href=URL.createObjectURL(blob)
-
-a.download="resume-backup.json"
-
-a.click()
-
-}
-
-
-// IMPORT JSON
-
-function importData(){
-
-let file=document.getElementById("importJSON").files[0]
-
-let reader=new FileReader()
-
-reader.onload=function(e){
-
-data=JSON.parse(e.target.result)
-
-localStorage.setItem("resumeData",JSON.stringify(data))
-
-render()
-
-}
-
-reader.readAsText(file)
-
-}
-
-
-// BUSINESS CARD DOWNLOAD
-
-function downloadCard(){
-
-html2canvas(document.getElementById("cardPreview")).then(canvas=>{
-
-let a=document.createElement("a")
-
-a.href=canvas.toDataURL()
-
-a.download="business-card.png"
-
-a.click()
-
-})
-
-}
-
-</script>
-
+<body data-theme="dark">
+
+    <div class="glow" style="top: -10%; left: -10%;"></div>
+    <div class="glow" style="bottom: 10%; right: 0;"></div>
+
+    <div class="theme-hub">
+        <span style="font-size: 10px; font-weight: 800; opacity: 0.5;">THEME</span>
+        <div class="t-btn active" data-theme="dark" style="background: #8b5cf6;"></div>
+        <div class="t-btn" data-theme="corporate" style="background: #2563eb;"></div>
+        <div class="t-btn" data-theme="infra" style="background: #0ea5e9;"></div>
+        <div class="t-btn" data-theme="gold" style="background: #d4af37;"></div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="tag-new">New: Infrastructure Automation 2.0</div>
+            <h1>Unlock a New Standard of <span style="color: var(--accent)">IT Performance.</span></h1>
+            <p style="margin-bottom: 30px; font-size: 1.1rem;">
+                Strategic Infrastructure Architect managing mission-critical Data Centers for <strong>Oman International Hospital</strong>. Seamless hardware orchestration for high-stakes environments.
+            </p>
+            <button class="btn-main">Review Architecture</button>
+            <div style="margin-top: 40px; display: flex; align-items: center; gap: 15px;">
+                <div style="display: flex;">
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: #444; border: 2px solid var(--bg);"></div>
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: #666; border: 2px solid var(--bg); margin-left: -10px;"></div>
+                </div>
+                <div style="font-size: 12px; font-weight: 600;">15+ Years <br> <span style="opacity: 0.6;">Enterprise Mastery</span></div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div style="width: 350px; height: 350px; background: var(--accent-glow); border-radius: 40px; transform: rotateX(45deg) rotateZ(-30deg); box-shadow: 0 50px 100px rgba(0,0,0,0.5); border: 2px solid var(--accent); position: relative;">
+                <div style="position: absolute; top: 10%; left: 10%; width: 80%; height: 20%; background: rgba(255,255,255,0.1); border-radius: 10px;"></div>
+                <div style="position: absolute; bottom: 10%; left: 10%; width: 50%; height: 40%; background: var(--accent); border-radius: 10px; opacity: 0.3;"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard">
+        <div class="box span-7">
+            <div class="icon-box">◈</div>
+            <h2>Infrastructure Orchestration</h2>
+            <p style="margin-bottom: 20px;">Commanding the hardware lifecycle at OIH. Managed P2V migrations, Aruba core switch trunks, and high-density SAN environments.</p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <span style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 12px;">HPE Synergy</span>
+                <span style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 12px;">Sangfor HCI</span>
+                <span style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 12px;">FortiGate VDOM</span>
+            </div>
+        </div>
+
+        <div class="box span-5" style="text-align: center;">
+            <div style="font-size: 4rem; font-weight: 800; color: var(--accent);">99.9%</div>
+            <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; font-weight: 800;">Uptime Guaranteed</div>
+            <div style="margin-top: 30px; height: 2px; background: var(--border);"></div>
+            <div style="margin-top: 30px; font-size: 0.9rem;">Zero critical failure in hospital ops.</div>
+        </div>
+
+        <div class="box span-5">
+            <div class="icon-box">⚡</div>
+            <h2>Intelli-Automation</h2>
+            <p style="font-size: 0.9rem;">Developing Python-based portals for real-time network health. Leveraging Netmiko and Ollama for secure, on-prem AI assistance.</p>
+        </div>
+
+        <div class="box span-7">
+            <div class="icon-box">📂</div>
+            <h2>Padmalayam Archives</h2>
+            <p style="font-size: 0.9rem;">Private Cloud Architect: Building redundant, secure family cloud ecosystems using TrueNAS and CasaOS. Preserving digital legacy through hardware mastery.</p>
+        </div>
+    </section>
+
+    <footer class="partners">
+        <div>HPE_SYNERGY</div>
+        <div>ARUBA_CORE</div>
+        <div>SANGFOR_HCI</div>
+        <div>VMWARE_V8</div>
+        <div>FORTIGATE_SEC</div>
+    </footer>
+
+    <script>
+        const buttons = document.querySelectorAll('.t-btn');
+        const body = document.body;
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const theme = btn.getAttribute('data-theme');
+                body.setAttribute('data-theme', theme);
+                
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
