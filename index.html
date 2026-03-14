@@ -1,369 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudheep Padmalayam | IT Infrastructure Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --bg: #ffffff; --card: rgba(248, 250, 252, 0.9); --accent: #2563eb; 
+            --text-h: #0f172a; --text-p: #334155; --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.05); --bg-img: none;
+        }
 
-<title>Sudheep Padmalayam | IT Infrastructure Engineer</title>
+        [data-theme="dark"] { 
+            --bg: #020617; --card: rgba(15, 23, 42, 0.9); --accent: #38bdf8; 
+            --text-h: #f8fafc; --text-p: #94a3b8; --border: #1e293b; 
+        }
 
-<meta name="description" content="Senior IT Infrastructure Engineer with 18+ years experience in VMware, Networking, Datacenter, ELV Systems and Security Infrastructure.">
+        body { 
+            background-color: var(--bg); background-image: var(--bg-img);
+            background-size: cover; background-attachment: fixed;
+            color: var(--text-p); font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.4s ease; padding-bottom: 120px; margin: 0;
+        }
 
-<meta name="keywords" content="VMware Engineer, IT Infrastructure Engineer, Fortinet Firewall, CCTV Systems, ELV Systems, Datacenter Engineer">
+        .admin-hud {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: #000; color: #fff; padding: 10px 20px;
+            display: none; flex-wrap: wrap; gap: 15px; align-items: center;
+            z-index: 10000; border-bottom: 2px solid var(--accent);
+        }
+        body.edit-mode .admin-hud { display: flex; }
+        .hud-btn { background: #333; border: 1px solid #555; color: white; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        .hud-btn:hover { background: var(--accent); }
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+        .hero { padding: 100px 8% 40px; display: flex; align-items: center; gap: 40px; }
+        .profile-pic-container { position: relative; width: 180px; height: 180px; flex-shrink: 0; }
+        .profile-pic { width: 100%; height: 100%; border-radius: 40px; object-fit: cover; border: 4px solid var(--accent); background: #eee; }
+        .upload-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; border-radius: 40px; cursor: pointer; color: white; font-size: 12px; font-weight: bold; text-align: center; padding: 10px; }
+        body.edit-mode .upload-overlay { display: flex; }
 
-<style>
+        .hero-text h1 { font-size: 3.5rem; font-weight: 800; color: var(--text-h); line-height: 1; margin: 0; outline: none; }
+        .hero-text p { color: var(--accent); font-weight: 600; letter-spacing: 2px; margin-top: 10px; outline: none; }
 
-body{
-font-family:'Plus Jakarta Sans',sans-serif;
-margin:0;
-background:#0f172a;
-color:#e2e8f0;
-}
+        .dashboard { padding: 20px 8%; display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+        
+        .box { 
+            background: var(--card); border: 1px solid var(--border); 
+            border-radius: 24px; padding: 25px; position: relative;
+            backdrop-filter: blur(10px); transition: border 0.3s;
+            min-height: 80px; display: flex; flex-direction: column; outline: none;
+            box-sizing: border-box;
+        }
 
-.container{
-width:90%;
-max-width:1200px;
-margin:auto;
-}
+        body.edit-mode .box { border: 2px dashed var(--accent); }
+        .sortable-ghost { opacity: 0.3; background: var(--accent) !important; }
+        
+        .w-small { width: calc(33.33% - 14px); }
+        .w-med { width: calc(50% - 10px); }
+        .w-full { width: 100%; }
 
-header{
-padding:80px 0;
-display:flex;
-align-items:center;
-gap:40px;
-}
+        .box-tools { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; z-index: 10; }
+        body.edit-mode .box-tools { display: flex; }
+        
+        /* Drag Handle specifically for moving */
+        .drag-handle { cursor: move; font-size: 14px; color: var(--accent); margin-right: 5px; display: none; }
+        body.edit-mode .drag-handle { display: inline-block; }
 
-.profile{
-width:160px;
-height:160px;
-border-radius:30px;
-border:4px solid #38bdf8;
-object-fit:cover;
-}
+        .tool-btn { width: 24px; height: 24px; border-radius: 50%; border: none; cursor: pointer; font-size: 12px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
 
-h1{
-font-size:48px;
-margin:0;
-}
+        .theme-hub { position: fixed; top: 80px; right: 30px; z-index: 1000; background: var(--card); padding: 10px; border-radius: 50px; border: 1px solid var(--border); display: flex; gap: 10px; }
+        .t-btn { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .t-btn.active { border-color: var(--accent); transform: scale(1.2); }
 
-.role{
-color:#38bdf8;
-letter-spacing:2px;
-margin-top:10px;
-}
+        .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); padding: 12px; overflow: hidden; }
+        .ticker { display: inline-block; animation: scroll 40s linear infinite; font-weight: 800; color: var(--accent); white-space: nowrap; outline: none; }
+        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-.contact{
-margin-top:10px;
-opacity:0.8;
-}
-
-section{
-padding:60px 0;
-border-top:1px solid #1e293b;
-}
-
-.section-title{
-font-size:28px;
-margin-bottom:30px;
-color:#38bdf8;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-}
-
-.card{
-background:#020617;
-border:1px solid #1e293b;
-border-radius:15px;
-padding:20px;
-}
-
-.skills span{
-display:inline-block;
-background:#1e293b;
-padding:6px 12px;
-margin:5px;
-border-radius:20px;
-font-size:14px;
-}
-
-.timeline{
-border-left:3px solid #38bdf8;
-padding-left:20px;
-}
-
-.timeline-item{
-margin-bottom:30px;
-}
-
-.project{
-background:#020617;
-padding:20px;
-border-radius:12px;
-border:1px solid #1e293b;
-}
-
-button{
-background:#38bdf8;
-border:none;
-padding:12px 18px;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-}
-
-footer{
-text-align:center;
-padding:40px;
-border-top:1px solid #1e293b;
-margin-top:60px;
-}
-
-.admin{
-position:fixed;
-top:20px;
-right:20px;
-background:#020617;
-padding:10px;
-border-radius:8px;
-border:1px solid #1e293b;
-}
-
-.admin button{
-margin:4px;
-}
-
-</style>
+        @media (max-width: 800px) { .hero { flex-direction: column; text-align: center; } .w-small, .w-med { width: 100%; } }
+    </style>
 </head>
-
-<body>
-
-<div class="container">
-
-<header>
-
-<img src="profile.jpg" class="profile">
-
-<div>
-
-<h1 contenteditable="true">Sudheep Padmalayam</h1>
-
-<div class="role" contenteditable="true">
-Senior IT Infrastructure & ELV Systems Administrator
-</div>
-
-<div class="contact" contenteditable="true">
-Muscat, Oman | +968 93566572 | sudheepnbr@gmail.com
-</div>
-
-<br>
-
-<a href="resume.pdf">
-<button>Download Resume</button>
-</a>
-
-</div>
-
-</header>
-
-<section>
-
-<div class="section-title">Professional Summary</div>
-
-<div class="card" contenteditable="true">
-
-Senior IT Infrastructure Engineer with 18+ years of experience managing enterprise infrastructure, datacenter operations, virtualization platforms, and ELV security systems. Skilled in VMware, Fortinet firewall management, network architecture, Veeam backup, SAN/NAS storage, and healthcare IT systems deployment.
-
-</div>
-
-</section>
-
-<section>
-
-<div class="section-title">Core Skills</div>
-
-<div class="skills">
-
-<span>VMware vSphere</span>
-<span>Fortinet Firewall</span>
-<span>Veeam Backup</span>
-<span>Windows Server</span>
-<span>Active Directory</span>
-<span>Datacenter Infrastructure</span>
-<span>CCTV Systems</span>
-<span>Access Control</span>
-<span>SAN / NAS Storage</span>
-<span>Cisco Call Manager</span>
-<span>Network Security</span>
-
-</div>
-
-</section>
-
-<section>
-
-<div class="section-title">Key Projects</div>
-
-<div class="grid">
-
-<div class="project">
-
-<h3>Hospital Datacenter Deployment</h3>
-
-Designed and implemented complete IT infrastructure including VMware cluster, SAN storage, firewall security and network segmentation for healthcare environment.
-
-</div>
-
-<div class="project">
-
-<h3>OIH Switch Health Platform</h3>
-
-Python + Netmiko automation tool for monitoring enterprise switches, generating reports and infrastructure health dashboards.
-
-</div>
-
-<div class="project">
-
-<h3>OIH DocuPilot</h3>
-
-AI based document scanning automation platform using OCR, template recognition and workflow automation.
-
-</div>
-
-</div>
-
-</section>
-
-<section>
-
-<div class="section-title">Professional Experience</div>
-
-<div class="timeline">
-
-<div class="timeline-item">
-
-<h3>Senior IT System Administrator</h3>
-
-<b>Oman International Hospital</b>
-
-<p>
-Infrastructure deployment, VMware management, Veeam backup, firewall security, ELV systems integration and datacenter operations.
-</p>
-
-</div>
-
-<div class="timeline-item">
-
-<h3>Project Engineer</h3>
-
-<b>Majan Security & Telecommunication</b>
-
-<p>
-ELV systems deployment including CCTV, access control, fiber network infrastructure and surveillance systems integration.
-</p>
-
-</div>
-
-<div class="timeline-item">
-
-<h3>Associate Storage Engineer</h3>
-
-<b>Knitlogix Pvt Ltd</b>
-
-<p>
-SAN, NAS and enterprise storage system implementation including LUN provisioning and storage infrastructure design.
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<section>
-
-<div class="section-title">Certifications</div>
-
-<div class="card">
-
-MCSA  
-CCNA  
-Enterprise Surveillance Systems Certification  
-
-</div>
-
-</section>
-
-<section>
-
-<div class="section-title">Contact</div>
-
-<div class="card">
-
-Email: sudheepnbr@gmail.com  
-Phone: +968 93566572  
-
-</div>
-
-</section>
-
-<footer>
-
-© 2026 Sudheep Padmalayam  
-IT Infrastructure Portfolio
-
-</footer>
-
-</div>
-
-<div class="admin">
-
-<button onclick="enableEdit()">Admin Mode</button>
-<button onclick="saveSite()">Save Page</button>
-
-</div>
-
-<script>
-
-function enableEdit(){
-
-const pin=prompt("Enter Admin PIN");
-
-if(pin==="2026"){
-
-document.querySelectorAll("[contenteditable]").forEach(e=>{
-
-e.contentEditable="true"
-
-})
-
-alert("Edit Mode Enabled")
-
-}
-
-}
-
-function saveSite(){
-
-const html=document.documentElement.outerHTML
-
-const blob=new Blob([html],{type:"text/html"})
-
-const a=document.createElement("a")
-
-a.href=URL.createObjectURL(blob)
-
-a.download="index.html"
-
-a.click()
-
-}
-
-</script>
-
+<body data-theme="default">
+
+    <div class="admin-hud">
+        <span>ADMIN MODE: Hold ⠿ to Drag</span>
+        <button class="hud-btn" onclick="addBox('w-small')">+ Small Box</button>
+        <button class="hud-btn" onclick="addBox('w-med')">+ Med Box</button>
+        <button class="hud-btn" onclick="addBox('w-full')">+ Full Box</button>
+        <button class="hud-btn" onclick="setPageBg()">Set Background</button>
+        <button class="hud-btn" style="background:var(--accent); margin-left:auto;" onclick="saveAndExit()">SAVE & DOWNLOAD</button>
+    </div>
+
+    <div class="theme-hub">
+        <div class="t-btn" data-theme="dark" style="background: #0f172a;"></div>
+        <div class="t-btn active" id="edit-trigger" data-theme="default" style="background: #2563eb;"></div>
+        <div class="t-btn" data-theme="lite" style="background: #cbd5e1;"></div>
+    </div>
+
+    <header class="hero" id="hero-area">
+        <div class="profile-pic-container">
+            <img src="https://via.placeholder.com/180" id="user-photo" class="profile-pic" alt="Profile">
+            <div class="upload-overlay" onclick="document.getElementById('photo-input').click()">UPLOAD</div>
+            <input type="file" id="photo-input" hidden accept="image/*" onchange="uploadPhoto(this)">
+        </div>
+        <div class="hero-text">
+            <h1 id="user-name">SUDHEEP<br>PADMALAYAM</h1>
+            <p id="user-role">SENIOR IT INFRASTRUCTURE & ELV ADMINISTRATOR</p>
+            <div style="margin-top:15px; font-size:14px; opacity:0.8;" id="user-contact">
+                📍 Muscat, Oman | 📞 +968 93566572 | ✉ sudheepnbr@gmail.com
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard" id="dashboard"></main>
+
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker-content">INFRASTRUCTURE • VIRTUALIZATION • NETWORKING • FIREWALLS • CCTV • ACCESS CONTROL • SAN/NAS • </div>
+    </div>
+
+    <script>
+        const dashboard = document.getElementById('dashboard');
+        const trigger = document.getElementById('edit-trigger');
+        let sortable;
+
+        const defaultData = {
+            photo: 'https://via.placeholder.com/180',
+            bg: '',
+            name: 'SUDHEEP<br>PADMALAYAM',
+            role: 'SENIOR IT INFRASTRUCTURE & ELV ADMINISTRATOR',
+            contact: '📍 Muscat, Oman | 📞 +968 93566572 | ✉ sudheepnbr@gmail.com',
+            ticker: 'INFRASTRUCTURE • VIRTUALIZATION • NETWORKING • FIREWALLS • CCTV • ACCESS CONTROL • SAN/NAS • ',
+            boxes: [
+                { size: 'w-small', html: '<div style="font-size:40px; font-weight:800; color:var(--accent)">18+</div><div>Years Experience</div>', weight: 'normal', fSize: '16px', align: 'center' },
+                { size: 'w-med', html: '<h2>Professional Summary</h2><p>Expert in Enterprise IT and Datacenters.</p>', weight: 'normal', fSize: '15px', align: 'left' }
+            ]
+        };
+
+        function initSortable() {
+            if(sortable) sortable.destroy();
+            sortable = new Sortable(dashboard, {
+                animation: 200,
+                handle: '.drag-handle', // Only drag by the handle
+                ghostClass: 'sortable-ghost',
+                disabled: true // Disabled by default
+            });
+        }
+
+        function loadPage() {
+            const saved = JSON.parse(localStorage.getItem('sudheep_portfolio_v2')) || defaultData;
+            document.getElementById('user-photo').src = saved.photo;
+            document.getElementById('user-name').innerHTML = saved.name;
+            document.getElementById('user-role').innerText = saved.role;
+            document.getElementById('user-contact').innerText = saved.contact;
+            document.getElementById('ticker-content').innerText = saved.ticker;
+            if(saved.bg) document.documentElement.style.setProperty('--bg-img', `url('${saved.bg}')`);
+
+            dashboard.innerHTML = '';
+            saved.boxes.forEach(b => createBox(b.size, b.html, b.weight, b.fSize, b.align));
+            initSortable();
+        }
+
+        let pressTimer;
+        trigger.onmousedown = () => {
+            pressTimer = setTimeout(() => {
+                document.body.classList.add('edit-mode');
+                document.querySelectorAll('.box, .hero-text *, .ticker').forEach(el => el.contentEditable = "true");
+                sortable.option("disabled", false); // Enable dragging
+            }, 3000);
+        };
+        trigger.onmouseup = () => clearTimeout(pressTimer);
+
+        function createBox(size, html, weight = 'normal', fSize = '16px', align = 'left') {
+            const div = document.createElement('div');
+            div.className = `box ${size}`;
+            div.style.fontWeight = weight;
+            div.style.fontSize = fSize;
+            div.style.textAlign = align;
+            div.innerHTML = `
+                <div class="box-tools" contenteditable="false">
+                    <span class="drag-handle">⠿</span>
+                    <button class="tool-btn" onclick="customizeBox(this)">⚙️</button>
+                    <button class="tool-btn" style="background:#ff4444;color:white" onclick="this.closest('.box').remove()">×</button>
+                </div>
+                <div class="inner-content">${html}</div>`;
+            dashboard.appendChild(div);
+        }
+
+        function addBox(size) {
+            createBox(size, '<h2>New Header</h2><p>New content...</p>');
+            if(document.body.classList.contains('edit-mode')) {
+                document.querySelectorAll('.box').forEach(el => el.contentEditable = "true");
+            }
+        }
+
+        function customizeBox(btn) {
+            const box = btn.closest('.box');
+            const newSize = prompt("Font Size:", box.style.fontSize || '16px');
+            const isBold = confirm("Bold?");
+            const newAlign = prompt("Align (left, center, right):", box.style.textAlign || 'left');
+            if(newSize) box.style.fontSize = newSize;
+            box.style.fontWeight = isBold ? '800' : '400';
+            if(newAlign) box.style.textAlign = newAlign;
+        }
+
+        function uploadPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => document.getElementById('user-photo').src = e.target.result;
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function setPageBg() {
+            const url = prompt("Background URL:");
+            if(url) document.documentElement.style.setProperty('--bg-img', `url('${url}')`);
+        }
+
+        function saveAndExit() {
+            const dataToSave = {
+                photo: document.getElementById('user-photo').src,
+                bg: getComputedStyle(document.documentElement).getPropertyValue('--bg-img').replace(/url\(['"]?(.*?)['"]?\)/i, '$1'),
+                name: document.getElementById('user-name').innerHTML,
+                role: document.getElementById('user-role').innerText,
+                contact: document.getElementById('user-contact').innerText,
+                ticker: document.getElementById('ticker-content').innerText,
+                boxes: []
+            };
+
+            document.querySelectorAll('.box').forEach(box => {
+                dataToSave.boxes.push({
+                    size: Array.from(box.classList).find(c => c.startsWith('w-')),
+                    html: box.querySelector('.inner-content').innerHTML,
+                    weight: box.style.fontWeight,
+                    fSize: box.style.fontSize,
+                    align: box.style.textAlign
+                });
+            });
+
+            localStorage.setItem('sudheep_portfolio_v2', JSON.stringify(dataToSave));
+            document.body.classList.remove('edit-mode');
+            document.querySelectorAll('[contenteditable]').forEach(el => el.contentEditable = "false");
+            sortable.option("disabled", true);
+
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'index.html';
+            a.click();
+            alert("Saved and downloaded!");
+        }
+
+        loadPage();
+
+        document.querySelectorAll('.t-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.body.setAttribute('data-theme', btn.dataset.theme);
+            };
+        });
+    </script>
 </body>
 </html>
